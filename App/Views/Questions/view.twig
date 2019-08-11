@@ -74,9 +74,12 @@
 				          }
 				        },
 				      },
-				      placeholder: 'Your answer',
 				      theme: 'snow'
 				    });
+
+					
+					quill.format('direction', 'rtl');
+					quill.format('align', 'right');
 
 				    quill.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
 						  var regex = /https?:\/\/[^\s]+/g;
@@ -187,14 +190,14 @@
 								<!-- Vote Button -->
 								<span class="btn-vote d-inline-block">
 									<div class="input-group">
-	                  <span class="input-group-prepend">
-	                    <span class="input-group-text text-primary click-vote {% if is_voted.value == 1 %}active{% endif %}" onclick="vote_question({{ question.id }});"><i class="fe fe-thumbs-up"></i></span>
-	                  </span>
-	                  <input type="text" class="form-control text-center plaintext votes-number" disabled="" value="{{ question.votes }} votes">
-	                  <span class="input-group-append">
-	                    <span class="input-group-text text-primary click-unvote {% if is_voted.value == -1 %}active{% endif %}" onclick="unvote_question({{ question.id }});"><i class="fe fe-thumbs-down"></i></span>
-	                  </span>
-	                </div>
+										<span class="input-group-append">
+											<span class="input-group-text text-primary click-vote {% if is_voted.value == 1 %}active{% endif %}" onclick="vote_question({{ question.id }});"><i class="fe fe-thumbs-up"></i></span>
+										</span>
+										<input type="text" class="form-control text-center plaintext votes-number" disabled="" value="{{ question.votes }} votes">
+										<span class="input-group-prepend">
+											<span class="input-group-text text-primary click-unvote {% if is_voted.value == -1 %}active{% endif %}" onclick="unvote_question({{ question.id }});"><i class="fe fe-thumbs-down"></i></span>
+										</span>
+									</div>
 								</span>
 								<!-- /Vote Button -->
 
@@ -276,7 +279,7 @@
 								<div class="">
 									<div class="dropdown">
 									  <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
-									    <i class="fe fe-chevron-down mr-1"></i> Sorting Answers: {{ this_page.order_name }}
+									     {{ this_page.order_name }}: Sorting Answers<i class="fe fe-chevron-down mr-1"></i> 
 									  </button>
 									  <div class="dropdown-menu">
 									    <a href="#" class="dropdown-item {% if this_page.order_name == 'Newest' %}font-weight-bold{% endif %}" onclick="sort_answers_by('{{ this_page.url }}', 'newest');">Newest</a>

@@ -86,14 +86,14 @@
                       </div>
                     </td>
                     <td>
-                      <b>{{ topic.title }} <small>[<a href="/topic/{{ topic.url }}" target="_blank">/topic/{{ topic.url }}</a>]</small></b>
+                      <b>{{ topic.title }} <small><a href="/topic/{{ topic.url }}" target="_blank">/topic/{{ topic.url }}</a></small></b>
                       <br>
                       <small> <b>{{ topic.followers }}</b> Followers, <b>{{ topic.questions }}</b> Questions</small><br>
                       <div class="card p-2"><small>{% autoescape 'html' %}{{ topic.description | raw }}{% endautoescape %}</small></div>
                     </td>
                     <td>
-                      <a href="/admin/topics/edit?id={{ topic.id }}" class="btn btn-outline-primary btn-sm"><i class="fe fe-edit"></i> Edit</a>
-                      <a href="javascript:hideTopic({{ topic.id }})" class="btn btn-outline-danger btn-sm mt-3"><i class="fe fe-eye-off"></i> Hide</a>
+                      <a href="/admin/topics/edit?id={{ topic.id }}" class="btn btn-outline-primary btn-sm">Edit <i class="fe fe-edit"></i></a>
+                      <a href="javascript:hideTopic({{ topic.id }})" class="btn btn-outline-danger btn-sm">Hide <i class="fe fe-eye-off"></i></a>
                     </td>
 
                   </tr>

@@ -38,7 +38,7 @@
   	{% if current_user %}
 
 			{% if question.is_closed == 0 %}
-				<a href="/question/{{ question.url }}#add_answer" class="btn btn-outline-primary btn-sm" id="answer_btn_{{ question.id }}"><i class="fe fe-edit"></i> Answer Question</a>
+				<a href="/question/{{ question.url }}#add_answer" class="btn btn-outline-primary btn-sm" id="answer_btn_{{ question.id }}">Answer Question <i class="fe fe-edit"></i></a>
 			{% else %}
 				<a href="/question/{{ question.url }}" class="btn btn-outline-secondary btn-sm"><i class="fe fe-check"></i> Closed Question</a>
 			{% endif %}
@@ -82,7 +82,7 @@
 
 			<div class="dropdown share-links">
 				<button type="button" class="btn btn-outline-secondary dropdown-toggle btn-sm" data-toggle="dropdown">
-				  <i class="fe fe-share-2"></i> Share
+				  Share <i class="fe fe-share-2"></i>
 				</button>
 				<div class="dropdown-menu">
 			    <a class="dropdown-item" href="https://www.facebook.com/sharer.php?u={{ ('/question/' ~ question.url) | include_path_url }}" target="_blank" id="facebook">Facebook</a>

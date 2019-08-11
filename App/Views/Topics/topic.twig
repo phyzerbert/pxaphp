@@ -1,7 +1,7 @@
 <div class="topic p-4 border-bottom">
-  <div class="d-flex flex-column p-4">
-  	<div>
-  		<a href="/topic/{{ topic.url }}" class="topic-image d-block float-left mr-2">
+	<div class="d-flex flex-column p-4">
+		<div>
+			<a href="/topic/{{ topic.url }}" class="topic-image d-block float-left mr-2">
 				<img src="/media/images/topics/{{ topic.image }}" class="rounded">
 			</a>
 			<div class="float-right">
@@ -9,34 +9,34 @@
 				{% if current_user %}
 
 					<button id="unfollow_{{ topic.id }}" onclick="unfollow_topic({{ topic.id }});" class="followed-btn btn btn-primary btn-sm {% if topic.id not in followed_topics %}d-none{% endif %}">
-            <span class="following"><span class="fe fe-check"></span> Following</span>
-            <span class="unfollow"><span class="fe fe-slash"></span> Unfollow</span>
-          </button>
-          
-		    	<button id="follow_{{ topic.id }}" onclick="follow_topic({{ topic.id }});" class="follow-btn btn btn-outline-primary btn-sm {% if topic.id in followed_topics %}d-none{% endif %}">
-            <span class="fe fe-check"></span> Follow
-          </button>
-        
-        {% else %}
+						<span class="following"><span class="fe fe-check"></span> Following</span>
+						<span class="unfollow"><span class="fe fe-slash"></span> Unfollow</span>
+					</button>
 				
+					<button id="follow_{{ topic.id }}" onclick="follow_topic({{ topic.id }});" class="follow-btn btn btn-outline-primary btn-sm {% if topic.id in followed_topics %}d-none{% endif %}">
+						<span class="fe fe-check"></span> Follow
+					</button>
+				
+				{% else %}
+					
 					<a href="/signup" class="btn btn-outline-primary btn-sm">
-            <span class="fe fe-check"></span> Sign Up to Follow
-          </a>
-        
-        {% endif %}
-        
-      </div>
+						<span class="fe fe-check"></span> Sign Up to Follow
+					</a>
+				
+				{% endif %}
+			
+			</div>
 
 			<div>
-    		<h4 class="mt-1 mb-2"><a href="/topic/{{ topic.url }}">{{ topic.title }}</a></h4>
-    		<small class="d-block text-muted"><span id="topic_{{ topic.id }}_followers">{{ topic.followers }}</span> followers and {{ topic.questions }} questions</small>
-    	</div>
+				<h4 class="mt-1 mb-2"><a href="/topic/{{ topic.url }}">{{ topic.title }}</a></h4>
+				<small class="d-block text-muted"><span id="topic_{{ topic.id }}_followers">{{ topic.followers }}</span> followers and {{ topic.questions }} questions</small>
+			</div>
 
-    </div>
+		</div>
 
-    <div class="mt-1 mb-4">
-  		{% autoescape 'html' %}{{ topic.description | raw }}{% endautoescape %}
-  	</div>
+		<div class="mt-1 mb-4">
+			{% autoescape 'html' %}{{ topic.description | raw }}{% endautoescape %}
+		</div>
 
-  </div>
+	</div>
 </div>
