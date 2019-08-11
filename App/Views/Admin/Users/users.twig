@@ -52,7 +52,7 @@
               </div>
             </form>
           </div>
-          <a href="/admin/users/add" class="btn btn-primary ml-4"><i class="fe fe-plus mr-1"></i>Add new user</a>
+          <a href="/admin/users/add" class="btn btn-primary">Add new user <i class="fe fe-plus mr-1"></i></a>
         </div>
       </div>
 
@@ -91,27 +91,27 @@
                       <div class="row">
                         <div class="col-sm-6">
                           <small>
-                            <p class="m-0 p-0">Questions: <b>{{ user.questions }}</b> <a href="/user/{{ user.username }}/questions" target="_blank">[View All]</a></p>
-                            <p class="m-0 p-0">Answers: <b>{{ user.answers }}</b> <a href="/user/{{ user.username }}/answers" target="_blank">[View All]</a></p>
-                            <p class="m-0 p-0">Points: <b>{{ user.points }}</b></p>
-                            <p class="m-0 p-0">Email: <b>{{ user.email }}</b></p>
-                            <p class="m-0 p-0">Name: <b>{{ user.name | default("N/A") }}</b></p>
+                            <p class="m-0 p-0"><a href="/user/{{ user.username }}/questions" target="_blank">View All</a>  <b>{{ user.questions }}</b> :Questions  </p>
+                            <p class="m-0 p-0"><a href="/user/{{ user.username }}/answers" target="_blank">View All</a>  <b>{{ user.answers }}</b> :Answers</p>
+                            <p class="m-0 p-0"><b>{{ user.points }}</b>: Points</p>
+                            <p class="m-0 p-0"><b>{{ user.email }}</b>: Email</p>
+                            <p class="m-0 p-0"><b>{{ user.name | default("N/A") }}</b>: Name</p>
                           </small>
                         </div>
                         <div class="col-sm-6">
                           <small>
-                            <p class="m-0 p-0">Birth date: <b>{{ user.birth_date | default("N/A") }}</b></p>
-                            <p class="m-0 p-0">Location: <b>{{ user.location | default("N/A") }}</b></p>
-                            <p class="m-0 p-0">About: <b>{{ user.about | default("N/A") }}</b></p>
-                            <p class="m-0 p-0">Signed up: <b>{{ user.signup_stamp|timeago }}</b></p>
-                            <p class="m-0 p-0">Last activity: <b>{{ user.last_visit|timeago }}</b></p>
+                            <p class="m-0 p-0"><b>{{ user.birth_date | default("N/A") }}</b>: Birth date</p>
+                            <p class="m-0 p-0"><b>{{ user.location | default("N/A") }}</b>: Location</p>
+                            <p class="m-0 p-0"><b>{{ user.about | default("N/A") }}</b>: About</p>
+                            <p class="m-0 p-0"><b>{{ user.signup_stamp|timeago }}</b>: Signed up</p>
+                            <p class="m-0 p-0"><b>{{ user.last_visit|timeago }}</b>: Last activity</p>
                           </small>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <a href="/admin/users/edit?id={{ user.id }}" class="btn btn-outline-primary btn-sm"><i class="fe fe-edit"></i> Edit User</a>
-                      <a href="javascript:banUser({{ user.id }})" class="btn btn-outline-danger btn-sm mt-3"><i class="fe fe-lock"></i> Ban User</a>
+                      <a href="/admin/users/edit?id={{ user.id }}" class="btn btn-outline-primary btn-sm">Edit User<i class="fe fe-edit"></i></a>
+                      <a href="javascript:banUser({{ user.id }})" class="btn btn-outline-danger btn-sm mt-3">Ban User<i class="fe fe-lock"></i></a>
                     </td>
 
                   </tr>

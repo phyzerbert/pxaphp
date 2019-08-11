@@ -40,9 +40,11 @@
             }
           },
         },
-        placeholder: 'Enter page content',
         theme: 'snow'
       });
+
+      quill.format('direction', 'rtl');
+      quill.format('align', 'right');
 
       var form = document.querySelector('#addPageForm');
 
@@ -67,7 +69,7 @@
           Add new page
         </h1>
         <div class="page-options d-flex">
-          <a href="/admin/pages/index" class="btn btn-outline-primary ml-4"><i class="fe fe-arrow-left mr-1"></i>Back to all pages</a>
+          <a href="/admin/pages/index" class="btn btn-outline-primary ml-5">Back to all pages<i class="fe fe-arrow-left ml-1"></i></a>
         </div>
       </div>
 

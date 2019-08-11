@@ -4885,7 +4885,7 @@ input[type="button"].btn-block {
 .alert-dismissible .close {
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
   padding: 0.75rem 1.25rem;
   color: inherit;
 }
@@ -9855,7 +9855,7 @@ a.text-dark:hover, a.text-dark:focus {
 html {
   font-size: 16px;
   height: 100%;
-  direction: ltr;
+  direction: rtl;
 }
 
 body {
@@ -10183,7 +10183,7 @@ body.fixed-header .page {
 .page-subtitle {
   font-size: 0.8125rem;
   color: #6e7687;
-  margin-left: 2rem;
+  margin-right: 2rem;
 }
 
 .page-subtitle a {
@@ -10191,7 +10191,7 @@ body.fixed-header .page {
 }
 
 .page-options {
-  margin-left: auto;
+  margin-right: auto;
 }
 
 .page-breadcrumb {
@@ -11663,7 +11663,7 @@ a.icon:hover {
 }
 
 .nav-tabs .nav-item i {
-  margin-right: .25rem;
+  margin-left: .25rem;
   line-height: 1;
   font-size: 0.875rem;
   width: 0.875rem;

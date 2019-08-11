@@ -117,9 +117,9 @@
                         <div class="form-label mb-0" for="email_activation">Activation requirement</div>
                         <small class="text-muted">If option is switched on - all new users will need to confirm their email addresses. Otherwise all new users are automatically confirmed. Is recommended to turn option on to avoid fraud accounts - but check if emails are sent without issues.</small>
                         <label class="d-block custom-switch mt-2">
+                          <span class="custom-switch-description">Require activation</span>
                           <input type="checkbox" name="email_activation" id="email_activation" class="custom-switch-input" {% if(app_settings.email_activation == 1) %}checked="checked"{% endif %}>
                           <span class="custom-switch-indicator"></span>
-                          <span class="custom-switch-description">Require activation</span>
                         </label>
                       </div>
                     </div>
@@ -355,9 +355,9 @@
                         <textarea class="form-control mt-2" id="banner_top" name="banner_top" placeholder="Top banner">{{ app_settings.banner_top }}</textarea>
 
                         <label class="d-block custom-switch mt-2">
+                          <span class="custom-switch-description">Enable code</span>
                           <input type="checkbox" name="banner_top_status" id="banner_top_status" class="custom-switch-input" {% if(app_settings.banner_top_status == 1) %}checked="checked"{% endif %}>
                           <span class="custom-switch-indicator"></span>
-                          <span class="custom-switch-description">Enable code</span>
                         </label>
 
                       </div>
@@ -372,9 +372,9 @@
                         <textarea class="form-control mt-2" id="banner_left" name="banner_left" placeholder="Left side banner">{{ app_settings.banner_left }}</textarea>
 
                         <label class="d-block custom-switch mt-2">
+                          <span class="custom-switch-description">Enable code</span>
                           <input type="checkbox" name="banner_left_status" id="banner_left_status" class="custom-switch-input" {% if(app_settings.banner_left_status == 1) %}checked="checked"{% endif %}>
                           <span class="custom-switch-indicator"></span>
-                          <span class="custom-switch-description">Enable code</span>
                         </label>
 
                       </div>
@@ -389,9 +389,9 @@
                         <textarea class="form-control mt-2" id="analytics_code" name="analytics_code" placeholder="Analytics or Tracking code">{{ app_settings.analytics_code }}</textarea>
 
                         <label class="d-block custom-switch mt-2">
+                          <span class="custom-switch-description">Enable code</span>
                           <input type="checkbox" name="analytics_code_status" id="analytics_code_status" class="custom-switch-input" {% if(app_settings.analytics_code_status == 1) %}checked="checked"{% endif %}>
                           <span class="custom-switch-indicator"></span>
-                          <span class="custom-switch-description">Enable code</span>
                         </label>
 
                       </div>

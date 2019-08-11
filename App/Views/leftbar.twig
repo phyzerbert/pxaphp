@@ -15,27 +15,27 @@
           <button href="#" class="btn btn-outline-primary float-right">Change</button>
           {% if current_user %}
             {% if this_page.menu == 'questions_feed' %}
-              <span class="icon mr-3"><i class="fe fe-zap"></i></span>Questions Feed<br>
+              Questions Feed<span class="icon ml-3"><i class="fe fe-zap"></i></span><br>
               <small class="menu-description">From topics which you follow only</small>
             {% elseif this_page.menu == 'questions_unanswered' %}
-              <span class="icon mr-3"><i class="fe fe-edit"></i></span>Answer Needed<br>
+              Answer Needed<span class="icon ml-3"><i class="fe fe-edit"></i></span><br>
               <small class="menu-description">For questions from your followed topics</small>
             {% elseif this_page.menu == 'questions_followed' %}
-              <span class="icon mr-3"><i class="fe fe-star"></i></span>Followed Questions<br>
+              Followed Questions<span class="icon ml-3"><i class="fe fe-star"></i></span><br>
               <small class="menu-description">Qnly questions which you followed</small>
             {% elseif this_page.menu == 'questions_own' %}
-              <span class="icon mr-3"><i class="fe fe-feather"></i></span>Your Own Questions<br>
+              Your Own Questions<span class="icon ml-3"><i class="fe fe-feather"></i></span><br>
               <small class="menu-description">Only questions asked by you</small>
             {% endif %}
           {% endif %}
           {% if this_page.menu == 'questions_all' %}
-            <span class="icon mr-3"><i class="fe fe-eye"></i></span>All Questions<br>
+            All Questions<span class="icon ml-3"><i class="fe fe-eye"></i></span><br>
             <small class="menu-description">View all questions from all topics</small>
           {% elseif this_page.menu == 'all_topics' %}
-            <span class="icon mr-3"><i class="fe fe-grid"></i></span>All Topics<br>
+            All Topics<span class="icon ml-3"><i class="fe fe-grid"></i></span><br>
             <small class="menu-description">View all topics and questions per each topic</small>
           {% elseif this_page.menu == 'all_users' %}
-            <span class="icon mr-3"><i class="fe fe-users"></i></span>All Users<br>
+            All Users<span class="icon ml-3"><i class="fe fe-users"></i></span><br>
             <small class="menu-description">View all users and find experts</small>
           {% endif %}
         </a>
@@ -49,22 +49,22 @@
   	<div class="list-group list-group-transparent mb-0 collapse d-lg-block" id="leftbarCollapse">
   		{% if current_user %}
         <a href="/questions/feed" class="list-group-item list-group-item-action {% if this_page.menu == 'questions_feed' %}active{% endif %}">
-        	<span class="icon mr-3"><i class="fe fe-zap"></i></span>Questions Feed<br>
+        	Questions Feed<span class="icon ml-3"><i class="fe fe-zap"></i></span><br>
         	<small class="menu-description">From topics which you follow only</small>
         </a>
 
         <a href="/questions/without-answer" class="list-group-item list-group-item-action {% if this_page.menu == 'questions_unanswered' %}active{% endif %}">
-        	<span class="icon mr-3"><i class="fe fe-edit"></i></span>Answer Needed<br>
+        	Answer Needed<span class="icon ml-3"><i class="fe fe-edit"></i></span><br>
         	<small class="menu-description">For questions from your followed topics</small>
         </a>
 
         <a href="/questions/followed" class="list-group-item list-group-item-action {% if this_page.menu == 'questions_followed' %}active{% endif %}">
-        	<span class="icon mr-3"><i class="fe fe-star"></i></span>Followed Questions<br>
+        	Followed Questions<span class="icon ml-3"><i class="fe fe-star"></i></span><br>
         	<small class="menu-description">Qnly questions which you followed</small>
         </a>
 
         <a href="/questions/own" class="list-group-item list-group-item-action {% if this_page.menu == 'questions_own' %}active{% endif %}">
-        	<span class="icon mr-3"><i class="fe fe-feather"></i></span>Your Own Questions<br>
+        	Your Own Questions<span class="icon ml-3"><i class="fe fe-feather"></i></span><br>
         	<small class="menu-description">Only questions asked by you</small>
         </a>
       {% endif %}

@@ -39,9 +39,11 @@
             ['code-block']
           ]
         },
-        placeholder: 'Enter topic description',
         theme: 'snow'
       });
+
+      quill.format('direction', 'rtl');
+      quill.format('align', 'right');
 
       var form = document.querySelector('#addTopicForm');
 
@@ -66,7 +68,7 @@
           Add new topic
         </h1>
         <div class="page-options d-flex">
-          <a href="/admin/topics/index" class="btn btn-outline-primary ml-4"><i class="fe fe-arrow-left mr-1"></i>Back to all topics</a>
+          <a href="/admin/topics/index" class="btn btn-outline-primary ml-5">Back to all topics<i class="fe fe-arrow-left mr-1"></i></a>
         </div>
       </div>
 
