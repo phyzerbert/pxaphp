@@ -1,0 +1,30 @@
+{#
+  Add New Answer Modal template
+  Tab Size: 2 
+#}
+<div class="card can_close" id="add_answer">
+
+	<form method="post" action="/answers/add">
+
+		<input type="hidden" name="question_id" value="{{ question.id }}">
+
+		<div class="card-body p-4">
+			<label class="form-label mb-1 text-primary" for="answer"><h5 class="mb-0">Add New Answer</h5></label>
+		  <small class="text-muted d-block pb-2">
+		    Write your answer below:
+		  </small>
+		  <input name="answer" type="hidden">
+		  <div id="editor"></div>
+		</div>
+
+		<div class="card-footer pt-2 pb-2">
+			<div class="d-flex">
+	      <div class="mr-auto">
+	      </div>
+	      <button type="submit" class="btn btn-primary">Add Answer</button>
+	    </div>    
+		</div>
+
+	</form>
+
+</div>

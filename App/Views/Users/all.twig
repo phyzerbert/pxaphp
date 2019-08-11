@@ -1,0 +1,95 @@
+{#
+  All users page template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}All Users{% endblock %}
+{% block page_description %}Find experts in any category{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="row">
+
+        {% include('leftbar.twig') %}
+
+        <div class="col-lg-9 order-lg-2 mt-4">
+
+        	{% if this_page.searched %}
+
+						<div class="row col-12 mb-4 pr-0 pl-0 no-gutters justify-content-between">
+	        		<div class="float-left">
+								<h5 class="pt-3">{{ users_number }} results for: '{{ this_page.searched }}' in users</h5>
+							</div>
+
+							<div class="float-right">
+								<div class="dropdown">
+								  <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+								    <i class="fe fe-search mr-1"></i> Search in: Users
+								  </button>
+								  <div class="dropdown-menu">
+								    <a href="/questions/search?search={{ this_page.searched }}" class="dropdown-item">Search in Questions</a>
+								    <a href="/topics/search?search={{ this_page.searched }}" class="dropdown-item">Search in Topics</a>
+								  </div>
+								</div>
+							</div>
+						</div>
+
+	        {% endif %}
+
+        	{% if settings.banner_top_status == 1 %}
+            <div class="max-width-100 row mb-4 pl-3 pr-3">
+              {{ settings.banner_top|raw }}
+            </div>
+          {% endif %}
+
+			    <div class="card users_list">
+		        
+		        <div class="pt-3">
+
+		          {% if users is not empty %}
+
+		            {% for user in users %}
+
+		            	<div class="user p-4 border-bottom">
+									  <div class="d-flex flex-column p-4">
+									  	<div>
+
+									  		<a class="tag float-right">Points: <b>{{ user.points }}</b></a>
+
+									  		<a href="/user/{{ user.username }}" class="user-image d-block float-left mr-2">
+									  			<span class="avatar avatar-xl" {% if user.photo %}style="color: transparent; background-image: url(/media/images/users/{{ user.photo }})"{% endif %}>{{ user.username|slice(0, 2)|upper }}</span></a>
+												</a>
+
+												<div class="float-left">
+									    		<h4 class="mt-1 mb-1"><a href="/user/{{ user.username }}">{{ user.username }} {% if user.name %}<span class="pl-2 text-muted user-name">{{ user.name }}</span>{% endif %}</a></h4>
+									    		<small class="d-block mb-1">{{ user.questions }} questions and {{ user.answers }} answers</small>
+									    		<small class="d-block text-muted">{{ user.about }}</small>
+									    	</div>
+
+									    </div>
+									  </div>
+									</div>
+
+		            {% endfor %}
+
+		          {% else %}
+
+		            <p>No users which you can view at the moment.</p>
+
+		          {% endif %}
+
+		        </div>
+		       
+		      </div>
+
+		      {% include('pagination.twig') %}
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

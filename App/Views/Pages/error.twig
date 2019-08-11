@@ -1,0 +1,41 @@
+{#
+  Error Pages template (Custom pages when not found)
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}{{ this_page.title }}{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="row">
+
+      	{% include('leftbar.twig') %}
+
+        <div class="col-lg-9 order-lg-2">
+
+          {% if settings.banner_top_status == 1 %}
+            <div class="max-width-100 row mt-4 mb-4 pl-3 pr-3">
+              {{ settings.banner_top|raw }}
+            </div>
+          {% endif %}
+
+          <div class="card p-4">
+            <div class="display-1 text-muted mb-5"><i class="si si-exclamation"></i> 404</div>
+
+            <h1 class="h2 mb-3">Oops.. You just found an error page..</h1>
+            <p class="h4 text-muted font-weight-normal mb-7">We are sorry but our service is currently not available&hellip;</p>
+            
+            <div style="width: 200px">
+              <a class="btn btn-primary" href="javascript:history.back()"><i class="fe fe-arrow-left mr-2"></i> Go back</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,213 @@
+{#
+  Admin Panel. Hidden answers template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Hidden answers. Admin panel{% endblock %}
+
+{% block footer %}
+
+  <script>
+
+    function restoreAnswer(id) {
+      
+      if(id > 0) {
+        $("#restoreAnswerId").val(id);
+        $('#restoreAnswerModal').modal('show');
+      }
+    }
+
+    function deleteAnswer(id) {
+      
+      if(id > 0) {
+        $("#deleteAnswerId").val(id);
+        $('#deleteAnswerModal').modal('show');
+      }
+    }
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          {% if(search) %}
+            Hidden answers: <b>{{search}}</b> 
+          {% else %}
+            All Hidden Answers
+          {% endif %}
+        </h1>
+        <div class="page-subtitle">
+          {% if(search) %}
+            {{ answers_number }} results found
+          {% else %}
+            {{ paginator.offset + 1 }} - {{ answers|length }} of {{ answers_number }} hidden answers
+          {% endif %}
+        </div>
+        <div class="page-options d-flex">
+          <div>
+            <form method="get" action="/admin/answers/hidden">
+              <div class="input-icon ml-2">
+                <span class="input-icon-addon">
+                  <i class="fe fe-search"></i>
+                </span>
+                <input type="text" class="form-control w-10" name="search" placeholder="Search in hidden answers" value={{ search }}>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        
+        <div class="card-header">
+          <h3 class="card-title">Hidden answers</h3>
+          <a href="/admin/answers/index" class="ml-auto btn btn-outline-secondary btn-sm">View Active</a>
+        </div>
+
+        {% if answers is not empty %}
+          <div class="table-responsive">
+            <table class="table card-table table-vcenter">
+              <thead>
+                <tr>
+                  <th class="w-1">ID</th>
+                  <th>Answer</th>
+                  <th class="w-1"></th>
+                </tr>
+              </thead>
+              <tbody>
+
+                {% for answer in answers %}
+
+                  {% if answer.id > 0 %}
+
+                    <tr>
+
+                      <td class="text-muted">{{ answer.id }}</td>
+                      <td>
+
+                        <div class="post card p-3">
+
+                          <div class="pb-6 border-bottom">
+                            <h1 class="mb-2"><a href="/question/{{ answer.question.url }}">{{ answer.question.title }}</a></h1>
+                            <small>{% autoescape 'html' %}{{ question.description | raw }}{% endautoescape %}</small>
+
+                            <div class="question-images mt-2">
+                              {% for this_image in answer.question.images %}
+                                <a href="/media/images/questions/{{ this_image.image }}" class="image-link"><img src="/media/images/questions/{{ this_image.image }}" alt="{{ answer.question.title }}" class="img-thumbnail" /></a>
+                              {% endfor %}
+                            </div>
+
+                            <div class="mt-4">
+                              <small class="text-muted"><a href="/user/{{ answer.question.author.username }}"><span class="avatar avatar-sm" {% if answer.question.author.photo %}style="color: transparent; background-image: url(/media/images/users/{{ answer.question.author.photo }})"{% endif %}>{{ answer.question.author.username|slice(0, 2)|upper }}</span></a> <a href="/user/{{ answer.question.author.username }}">{{ answer.question.author.username|capitalize }}</a> asked on {{ answer.question.added_at|date('d F Y, H:i') }}</small>
+                            </div>
+                          </div>
+
+                          <div class="media pt-6">
+
+                            <a href="/user/{{ answer.author.username }}" target="_blank"><div class="media-object avatar avatar-md mr-4" {% if answer.author.photo %}style="color: transparent; background-image: url(/media/images/users/{{ answer.author.photo }})"{% endif %}>{{ answer.author.username|slice(0, 2)|upper }}</div></a>
+                            
+                            <div class="media-body">
+                              <div class="media-heading">
+
+                                <h5 class="mb-0"><a href="/user/{{ answer.author.username }}" target="_blank">{{ answer.author.username|capitalize }} <span class="text-muted" style="font-size: 85%">{{ answer.author.points }} p.</span></a></h5>
+                                <small class="text-muted">Answered <a class="text-muted text-hover-underline" href="/question/{{ answer.question.url }}?answer_id={{ answer.id }}" target="_blank">{{ answer.added_at|timeago }}</a>{% if answer.modified_at > 0%} (Edited {{ answer.modified_at|timeago }}){% endif %}</small>
+
+                              </div>
+                              <div class="mt-2 answer_content">
+                                {% autoescape 'html' %}{{ answer.answer | raw }}{% endautoescape %}
+                              </div>
+                            </div>
+
+                          </div>
+
+                        </div>
+      
+                      </td>
+                      <td>
+                        <a href="/question/{{ answer.question.url }}" target="_blank" class="btn btn-outline-primary btn-sm">View Question</a>
+                        <a href="/question/{{ answer.question.url }}?answer_id={{ answer.id }}" target="_blank" class="btn btn-outline-primary btn-sm mt-4">View Answer</a>
+                        <a href="/admin/answers/edit?id={{ answer.id }}" class="btn btn-outline-primary btn-sm mt-3"><i class="fe fe-edit"></i> Edit</a>
+                        <a href="javascript:restoreAnswer({{ answer.id }})" class="btn btn-outline-secondary btn-sm mt-3"><i class="fe fe-eye"></i> Restore</a>
+                        <a href="javascript:deleteAnswer({{ answer.id }})" class="btn btn-outline-danger btn-sm mt-3"><i class="fe fe-trash-2"></i> Delete</a>
+                      </td>
+
+                    </tr>
+
+                  {% endif %}
+                  
+                {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+
+        {% else %}
+
+          <div class="p-4">
+            {% if(search) %}
+              <p>Nothing found for <b>{{ search }}</b>.</p>
+            {% else %}
+              <p>Seems that you do not have any hidden answer yet.</p>
+            {% endif %}
+          </div>
+
+        {% endif %}
+
+      </div>
+
+      {% include('pagination.twig') %}
+
+    </div>
+
+  </div>
+
+  <div class="modal fade" id="restoreAnswerModal" tabindex="-1" role="dialog" aria-labelledby="restoreAnswerLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <form method="post" action="/admin/answers/restore">
+          <div class="modal-body text-center">
+            <h1><i class="fe fe-eye-off pt-4 text-secondary"></i></h1>
+            <h5 class="modal-title">Do you confirm that want to restore that answer?</h5>
+            <small>After restoring - answer will be available for all users.</small>
+          </div>
+          <div class="modal-footer">
+            <input type="hidden" name="redirect_url" value="/admin/answers/restore">
+            <input type="hidden" id="restoreAnswerId" name="id" value="0">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-secondary">Restore</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="deleteAnswerModal" tabindex="-1" role="dialog" aria-labelledby="deleteAnswerLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <h1><i class="fe fe-trash-2 pt-4 text-danger"></i></h1>
+          <h5 class="modal-title">Do you confirm that want to delete that answer?</h5>
+          <small>After deleting - you can not restore it.</small>
+          <small>With answer will be removed also all votes and notifications.</small>
+          <br>
+          <small>User will not receive notification that answer was deleted.</small>
+        </div>
+        <div class="modal-footer">
+          <form method="post" action="/admin/answers/delete">
+            <input type="hidden" name="redirect_url" value="/admin/answers/hidden">
+            <input type="hidden" id="deleteAnswerId" name="id" value="0">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

@@ -1,0 +1,199 @@
+{#
+  Admin Panel. Hidden questions template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Hidden questions. Admin panel{% endblock %}
+
+{% block footer %}
+
+  <script>
+
+    function restoreQuestion(id) {
+      
+      if(id > 0) {
+        $("#restoreQuestionId").val(id);
+        $('#restoreQuestionModal').modal('show');
+      }
+    }
+
+    function deleteQuestion(id) {
+      
+      if(id > 0) {
+        $("#deleteQuestionId").val(id);
+        $('#deleteQuestionModal').modal('show');
+      }
+    }
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          {% if(search) %}
+            Hidden questions: <b>{{search}}</b> 
+          {% else %}
+            All Questions
+          {% endif %}
+        </h1>
+        <div class="page-subtitle">
+          {% if(search) %}
+            {{ questions_number }} results found
+          {% else %}
+            {{ paginator.offset + 1 }} - {{ questions|length }} of {{ questions_number }} hidden questions
+          {% endif %}
+        </div>
+        <div class="page-options d-flex">
+          <div>
+            <form method="get" action="/admin/questions/hidden">
+              <div class="input-icon ml-2">
+                <span class="input-icon-addon">
+                  <i class="fe fe-search"></i>
+                </span>
+                <input type="text" class="form-control w-10" name="search" placeholder="Search hidden question" value={{ search }}>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        
+        <div class="card-header">
+          <h3 class="card-title">Hidden questions</h3>
+          <a href="/admin/questions/index" class="ml-auto btn btn-outline-secondary btn-sm">View Active</a>
+        </div>
+
+        {% if questions is not empty %}
+          <div class="table-responsive">
+            <table class="table card-table table-vcenter">
+              <thead>
+                <tr>
+                  <th class="w-1">ID</th>
+                  <th>Question</th>
+                  <th class="w-1"></th>
+                </tr>
+              </thead>
+              <tbody>
+
+                {% for question in questions %}
+
+                  {% if question.id > 0 %}
+
+                    <tr>
+
+                      <td class="text-muted">{{ question.id }}</td>
+                      <td>
+
+                        <div class="card post p-4">
+                          <div class="tags mb-2">
+                            {% for this_topic in question.topics %}
+                              <a href="/topic/{{ this_topic.url }}" class="tag" target="_blank">{{ this_topic.title }}</a>
+                            {% endfor %}
+                          </div>
+
+                          <h3 class="mb-2"><a href="/question/{{ question.url }}" target="_blank">{{ question.title }}</a></h3>
+                          <small>{% autoescape 'html' %}{{ question.description | raw }}{% endautoescape %}</small>
+
+                          <div class="question-images mt-2 mb-2">
+                            {% for this_image in question.images %}
+                              <a href="/media/images/questions/{{ this_image.image }}" target="_blank" class="image-link"><img src="/media/images/questions/{{ this_image.image }}" alt="{{ question.title }}" class="img-thumbnail" /></a>
+                            {% endfor %}
+                          </div>
+
+                          <div class="mt-4">
+                            <small class="text-muted"><a href="/user/{{ question.author.username }}" target="_blank"><span class="avatar avatar-sm" {% if question.author.photo %}style="color: transparent; background-image: url(/media/images/users/{{ question.author.photo }})"{% endif %}>{{ question.author.username|slice(0, 2)|upper }}</span></a> <a href="/user/{{ question.author.username }}" target="_blank">{{ question.author.username|capitalize }}</a> asked on {{ question.added_at|date('d F Y, H:i') }}</small>
+                          </div>
+
+                          <div class="mt-4">
+                            <small><a href="/question/{{ question.url }}" target="_blank"><b>{{ question.answers }}</b> answers</a> / <b>{{ question.votes }}</b> votes / <b>{{ question.views }}</b> views</small>
+                          </div>
+                        </div>
+      
+                      </td>
+                      <td>
+                        <a href="/admin/questions/edit?id={{ question.id }}" class="btn btn-outline-primary btn-sm"><i class="fe fe-edit"></i> Edit</a>
+                        <a href="javascript:restoreQuestion({{ question.id }})" class="btn btn-outline-secondary btn-sm mt-3"><i class="fe fe-eye"></i> Restore</a>
+                        <a href="javascript:deleteQuestion({{ question.id }})" class="btn btn-outline-danger btn-sm mt-3"><i class="fe fe-trash-2"></i> Delete</a>
+                      </td>
+
+                    </tr>
+
+                  {% endif %}
+                  
+                {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+
+        {% else %}
+
+          <div class="p-4">
+            {% if(search) %}
+              <p>Nothing found for <b>{{ search }}</b>.</p>
+            {% else %}
+              <p>Seems that you do not have any hidden question yet.</p>
+            {% endif %}
+          </div>
+
+        {% endif %}
+
+      </div>
+
+      {% include('pagination.twig') %}
+
+    </div>
+
+  </div>
+
+  <div class="modal fade" id="restoreQuestionModal" tabindex="-1" role="dialog" aria-labelledby="restoreQuestionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <h1><i class="fe fe-eye pt-4 text-secondarry"></i></h1>
+          <h5 class="modal-title">Do you confirm that want to restore that question?</h5>
+          <small>After restoring - question with answer will be available for all users.</small>
+        </div>
+        <div class="modal-footer">
+          <form method="post" action="/admin/questions/restore">
+            <input type="hidden" name="redirect_url" value="/admin/questions/hidden">
+            <input type="hidden" id="restoreQuestionId" name="id" value="0">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-secondary">Restore</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="deleteQuestionModal" tabindex="-1" role="dialog" aria-labelledby="deleteQuestionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <h1><i class="fe fe-trash-2 pt-4 text-danger"></i></h1>
+          <h5 class="modal-title">Do you confirm that want to delete that question?</h5>
+          <small>After deleting - you can not restore it.</small>
+          <small>With question will be removed also all answers, votes, notifications.</small>
+          <br>
+          <small>User will not receive notification that question was deleted.</small>
+        </div>
+        <div class="modal-footer">
+          <form method="post" action="/admin/questions/delete">
+            <input type="hidden" name="redirect_url" value="/admin/questions/hidden">
+            <input type="hidden" id="deleteQuestionId" name="id" value="0">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

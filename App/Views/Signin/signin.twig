@@ -1,0 +1,104 @@
+{#
+  Sign in template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Home{% endblock %}
+
+{% block footer %}
+
+    <script>
+
+      $(document).ready(function() {
+
+        /**
+         * Validate the form
+         */
+        $('#formSignin').validate({
+          rules: {
+            email: {
+              required: true,
+              email: true,
+            },
+            password: {
+              required: true,
+            }
+          },
+          messages: {
+            email: 'Enter your valid email address',
+            password: 'Enter your password'
+          },
+          errorPlacement: function ($error, $element) {
+            var name = $element.attr("name");
+
+            $("#error" + name).append($error);
+          }
+        });
+      });
+    </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="page-single">
+  	
+  	<div class="container">
+      <div class="row mt-8">
+        <div class="col col-login mx-auto">
+          <form class="card" action="/signin/new" method="post" id="formSignin">
+            <div class="card-body p-6">
+              <div class="card-title">Sign In</div>
+
+              {% if error == 1 %}
+                <div class="alert alert-danger" role="alert">
+                  <button type="button" class="close" data-dismiss="alert"></button>
+                  <b>Error:</b> Wrong email or password
+                </div>
+              {% endif %}
+              
+              <div class="form-group">
+                <label class="form-label">Email address</label>
+                <input type="email" class="form-control" id="email" name="email" id="exampleInputEmail1" autofocus aria-describedby="emailHelp" placeholder="Enter email" required="" tabindex="1" value="{{ email }}">
+                <span id="erroremail" class="error"></span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">
+                  Password
+                  <a href="/password/forgot" class="float-right small" tabindex="4">I forgot password</a>
+                </label>
+                <div class="input-icon">
+                  <input type="password" class="form-control" id="password" name="password" id="exampleInputPassword1" placeholder="Password" required="" tabindex="2">
+                  <span class="input-icon-addon toogle-password">
+                    <a href="#" onclick="tooglePassword();"><i class="fe fe-eye"></i></a>
+                  </span>
+                </div>
+                <span id="errorpassword" class="error"></span>
+              </div>
+
+              <div class="form-group">
+                <label class="custom-control custom-checkbox">
+                  <input type="checkbox" name="remember_me" class="custom-control-input" tabindex="3"{% if remember_me %} checked="checked"{% endif %}/>
+                  <span class="custom-control-label">Remember me</span>
+                </label>
+              </div>
+
+              <div class="form-footer">
+                <button type="submit" class="btn btn-primary btn-block" tabindex="4">Sign In</button>
+              </div>
+
+            </div>
+          </form>
+          
+          <div class="text-center text-muted">
+            Don't have account yet? <a href="/signup">Sign Up</a>
+          </div>
+        </div>
+      </div>
+    </div>
+	   	  
+	</div>
+
+{% endblock %}

@@ -1,0 +1,26 @@
+{% for notification in notifications %}
+	
+    <li class="row p-4 pl-2 pr-2 m-0">
+      	<div class="p-0" style="width: 42px">
+          {% if notification.type == 'dq' or notification.type == 'da' %}
+            <span class="avatar align-self-center">!</span>
+          {% else %}
+        		<a href="/user/{{ notification.from_user_username }}" target="_blank">
+  				    <span class="avatar align-self-center" {% if notification.from_user_photo %}style="color: transparent; background-image: url(/media/images/users/{{ notification.from_user_photo }})"{% endif %}>{{ notification.from_user_username|slice(0, 2)|upper }}</span>
+        		</a>
+          {% endif %}
+      	</div>
+      	<div class="p-0 col-sm">
+          {% if notification.type == 'dq' %}
+            Your question: <a href="/question/{{ notification.question_url }}" target="_blank">{{ notification.question_title }}</a> was removed by moderators.
+          {% elseif notification.type == 'da' %}
+            Your answer: <a href="/question/{{ notification.question_url }}" target="_blank">{{ notification.answer }}</a> was removed by moderators.
+          {% else %}
+      		  <a href="/user/{{ notification.from_user_username }}" target="_blank">{{ notification.from_user_username|capitalize }}</a> {% if notification.type == 'na' %}added new answer in{% elseif notification.type == 'nm' %}added new mention in{% elseif notification.type == 'cq' %} closed question{% endif %}: <a href="/question/{{ notification.question_url }}" target="_blank">{{ notification.question_title }}</a>
+          {% endif %}
+      		<br>
+      		<p class="time mt-3">{{ notification.created_at|timeago }}</p>
+      	</div>
+    </li>
+
+{% endfor %}

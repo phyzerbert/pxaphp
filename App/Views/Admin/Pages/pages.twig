@@ -1,0 +1,175 @@
+{#
+  Admin Panel. Pages template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Pages. Admin panel{% endblock %}
+
+{% block footer %}
+
+  <script>
+
+    function hidePage(id) {
+      
+      if(id > 0) {
+        $("#hidePageId").val(id);
+        $('#hidePageModal').modal('show');
+      }
+    }
+
+    function deletePage(id) {
+      
+      if(id > 0) {
+        $("#deletePageId").val(id);
+        $('#deletePageModal').modal('show');
+      }
+    }
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          {% if(search) %}
+            Pages: <b>{{search}}</b> 
+          {% else %}
+            All Pages
+          {% endif %}
+        </h1>
+        <div class="page-subtitle">
+          {% if(search) %}
+            {{ pages_number }} results found
+          {% else %}
+            {{ paginator.offset + 1 }} - {{ pages|length }} of {{ pages_number }} pages
+          {% endif %}
+        </div>
+        <div class="page-options d-flex">
+          <div>
+            <form method="get" action="/admin/pages/index">
+              <div class="input-icon ml-2">
+                <span class="input-icon-addon">
+                  <i class="fe fe-search"></i>
+                </span>
+                <input type="text" class="form-control w-10" name="search" placeholder="Search pages" value={{ search }}>
+              </div>
+            </form>
+          </div>
+          <a href="/admin/pages/add" class="btn btn-primary ml-4"><i class="fe fe-plus mr-1"></i>Add new page</a>
+        </div>
+      </div>
+
+      <div class="card">
+        
+        <div class="card-header">
+          <h3 class="card-title">Pages</h3>
+          <a href="/admin/pages/hidden" class="ml-auto btn btn-outline-secondary btn-sm">View Hidden</a>
+        </div>
+
+        {% if pages is not empty %}
+          <div class="table-responsive">
+            <table class="table card-table table-vcenter">
+              <thead>
+                <tr>
+                  <th class="w-1">ID</th>
+                  <th>Page</th>
+                  <th class="w-1"></th>
+                </tr>
+              </thead>
+              <tbody>
+
+                {% for page in pages %}
+
+                  <tr>
+
+                    <td class="text-muted">{{ page.id }}</td>
+                    <td>
+
+                      <p class="m-0">Title: <b>{{ page.title }}</b></p>
+                      <small>
+                        <p class="m-0">URL: <b class="pr-2">{{ page.url }}</b> [<a href="/page/{{ page.url }}" target="_blank">Open in new tab</a>]</p>
+                        <p class="m-0">Added: <b>{{ page.added_at|timeago }}</b></p>
+                        <p class="m-0">Active: <b>{% if page.active == 1 %} Active {% else %} Hidden {% endif %}</b></p>
+                      </small>
+    
+                    </td>
+                    <td>
+                      <a href="/admin/pages/edit?id={{ page.id }}" class="btn btn-outline-primary btn-sm mt-3"><i class="fe fe-edit"></i> Edit</a>
+                      <a href="javascript:hidePage({{ page.id }})" class="btn btn-outline-secondary btn-sm mt-3"><i class="fe fe-eye-off"></i> Hide</a>
+                      <a href="javascript:deletePage({{ page.id }})" class="btn btn-outline-danger btn-sm mt-3"><i class="fe fe-trash-2"></i> Delete</a>
+                    </td>
+
+                  </tr>
+                  
+                {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+
+        {% else %}
+
+          <div class="p-4">
+            {% if(search) %}
+              <p>Nothing found for <b>{{ search }}</b>.</p>
+            {% else %}
+              <p>Seems that you do not have any page yet.</p>
+            {% endif %}
+          </div>
+
+        {% endif %}
+
+      </div>
+
+      {% include('pagination.twig') %}
+
+    </div>
+
+  </div>
+
+  <div class="modal fade" id="hidePageModal" tabindex="-1" role="dialog" aria-labelledby="hidePageLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <form method="post" action="/admin/pages/hide">
+          <div class="modal-body text-center">
+            <h1><i class="fe fe-eye-off pt-4 text-secondary"></i></h1>
+            <h5 class="modal-title">Do you confirm that want to hide that page?</h5>
+            <small>After hiding - you can restore it on hidden pages page.</small>
+          </div>
+          <div class="modal-footer">
+            <input type="hidden" name="redirect_url" value="/admin/pages/index">
+            <input type="hidden" id="hidePageId" name="id" value="0">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-secondary">Hide</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="deletePageModal" tabindex="-1" role="dialog" aria-labelledby="deletePageLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <h1><i class="fe fe-trash-2 pt-4 text-danger"></i></h1>
+          <h5 class="modal-title">Do you confirm that want to delete that page?</h5>
+          <small>After deleting - you can not restore it.</small>
+        </div>
+        <div class="modal-footer">
+          <form method="post" action="/admin/pages/delete">
+            <input type="hidden" name="redirect_url" value="/admin/pages/index">
+            <input type="hidden" id="deletePageId" name="id" value="0">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

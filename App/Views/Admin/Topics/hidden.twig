@@ -1,0 +1,156 @@
+{#
+  Admin Panel. Hidden Topics template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Hidden Topics. Admin panel{% endblock %}
+
+{% block footer %}
+
+  <script>
+
+    function restoreTopic(id) {
+      if(id > 0) {
+        $("#restoreTopicId").val(id);
+        $('#restoreModal').modal('show');
+      }
+    }
+
+    function deleteTopic(id) {
+      if(id > 0) {
+        $("#deleteTopicId").val(id);
+        $('#deleteModal').modal('show');
+      }
+    }
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          Hidden Topics
+        </h1>
+        <div class="page-subtitle">
+          {{ paginator.offset + 1 }} - {{ topics|length }} of {{ topics_number }} topics
+        </div>
+        <div class="page-options d-flex">
+          <a href="/admin/topics/index" class="btn btn-outline-primary ml-4"><i class="fe fe-arrow-left mr-1"></i>Back to active topics</a>
+        </div>
+      </div>
+
+      <div class="card">
+        
+        <div class="card-header">
+          <h3 class="card-title">Hidden Topics</h3>
+        </div>
+        <div class="alert alert-icon alert-light" role="alert">
+          <i class="fe fe-info mr-2" aria-hidden="true"></i> Here are stored hidden topics, which are not available for users. For them - you have 2 options: <b>to restore</b> - which will make topic active again or <b>to delete</b> - which will completely delete information about topic and it's content from website.
+        </div>
+
+        {% if topics is not empty %}
+          <div class="table-responsive">
+            <table class="table card-table table-vcenter">
+              <thead>
+                <tr>
+                  <th class="w-1">ID</th>
+                  <th class="w-1">Image</th>
+                  <th>Topic</th>
+                  <th class="w-1"></th>
+                </tr>
+              </thead>
+              <tbody>
+
+                {% for topic in topics %}
+
+                  <tr>
+
+                    <td class="text-muted">{{ topic.id }}</td>
+                    <td>
+                      <div class="media">
+                        <span class="avatar avatar-xxl mr-5 no-border-radius" style="color: transparent; background-image: url(/media/images/topics/{{ topic.image }})"></span>
+                      </div>
+                    </td>
+                    <td>
+                      <b>{{ topic.title }} <small>[<a href="/topic/{{ topic.url }}" target="_blank">/topic/{{ topic.url }}</a>]</small></b>
+                      <br>
+                      <small> <b>{{ topic.followers }}</b> Followers, <b>{{ topic.questions }}</b> Questions</small><br>
+                      <div class="card p-2"><small>{% autoescape 'html' %}{{ topic.description | raw }}{% endautoescape %}</small></div>
+                    </td>
+                    <td>
+                      <a href="javascript:restoreTopic({{ topic.id }})" class="btn btn-outline-primary btn-sm"><i class="fe fe-rotate-ccw"></i> Restore</a>
+                      <a href="javascript:deleteTopic({{ topic.id }})" class="btn btn-outline-danger btn-sm mt-3"><i class="fe fe-trash-2"></i> Delete</a>
+                    </td>
+
+                  </tr>
+                  
+                {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+        
+        {% else %}
+      
+          <div class="p-4">
+            <p>No hidden topics found.</p>
+          </div>
+
+        {% endif %}
+
+      </div>
+
+      {% include('pagination.twig') %}
+
+    </div>
+
+  </div>
+
+  <!-- Restore Topic Modal -->
+  <div class="modal fade" id="restoreModal" tabindex="-1" role="dialog" aria-labelledby="restoreModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <h1><i class="fe fe-rotate-ccw pt-4 text-primary"></i></h1>
+          <h5 class="modal-title">Do you confirm that want to restore this topic?</h5>
+          <small>After restoring - topic will be active for all users.</small>
+        </div>
+        <div class="modal-footer">
+          <form method="post" action="/admin/topics/activate">
+            <input type="hidden" id="restoreTopicId" name="id" value="0">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-primary">Restore</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Topic Modal -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <h1><i class="fe fe-trash-2 pt-4 text-danger"></i></h1>
+          <h5 class="modal-title">Do you confirm topic deletion?</h5>
+          <small>After deleting - you will do not any have possibility to restore this topic.</small>
+          <br>
+          <small>However, all questions with answers will remain active, but without tagged topic.</small>
+        </div>
+        <div class="modal-footer">
+          <form method="post" action="/admin/topics/delete">
+            <input type="hidden" id="deleteTopicId" name="id" value="0">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

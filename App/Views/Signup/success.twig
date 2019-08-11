@@ -1,0 +1,39 @@
+{#
+  Success signup template - is displayed when is enabled option "Email validation"
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Succes Signup{% endblock %}
+
+{% block body %}
+
+	<div class="page-single">
+  	
+  	<div class="container">
+	    <div class="row mt-5">
+	      <div class="col col-login mx-auto">
+	        <div class="card" >
+	          <div class="card-body p-6">
+
+	          	<div class="text-center">
+	          		<h1><i class="fe fe-user-check"></i></h1>
+	          		<h4>Success!</h4>
+	          		<hr>
+	          	</div>
+
+	            <small>
+	            	Thank you for signing up!<br>
+	            	Please check your email to activate your account.<br>
+	            	<b>You can close that page.</b>
+	            </small>
+
+    				</div>
+					</div>
+	      </div>
+	    </div>
+	  </div>
+	   	  
+	</div>
+
+{% endblock %}

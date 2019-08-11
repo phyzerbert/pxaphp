@@ -1,0 +1,147 @@
+{#
+  Admin Panel. Add New Topic template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Add new topic. Admin panel{% endblock %}
+
+{% block footer %}
+
+  <script>
+
+    $(document).ready( function() {
+
+      function getImage(input) {
+
+        if (input.files && input.files[0]) {
+
+          var reader = new FileReader();
+              
+          reader.onload = function (e) {
+            $('#img-upload').attr('src', e.target.result);
+            $('.custom-file-label').html(input.files[0].name);
+          }
+          
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+
+      $(".custom-file-input").change(function(){
+        getImage(this);
+      });
+
+      var quill = new Quill('#editor', {
+        modules: {
+          toolbar: [
+            [{ header: [1, 2, false] }],
+            ['bold', 'italic', 'underline'],
+            ['code-block']
+          ]
+        },
+        placeholder: 'Enter topic description',
+        theme: 'snow'
+      });
+
+      var form = document.querySelector('#addTopicForm');
+
+      form.onsubmit = function() {
+
+        var description = document.querySelector('input[name=description]');
+        description.value = quill.root.innerHTML;
+      };
+
+    });
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          Add new topic
+        </h1>
+        <div class="page-options d-flex">
+          <a href="/admin/topics/index" class="btn btn-outline-primary ml-4"><i class="fe fe-arrow-left mr-1"></i>Back to all topics</a>
+        </div>
+      </div>
+
+      <div class="row col-sm-12">
+        <div class="card">
+          <form method="post" action="/admin/topics/new" enctype="multipart/form-data" id="addTopicForm">
+            <div class="card-header">
+              <h4 class="card-title">Topic</h4>
+            </div>
+            <div class="card-body">
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="title">Topic title <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Try to choose short title to not break layout. Let it be up to 10-12 characters.<br>
+                      Based on topic title will be created url to this topic page.
+                    </small>
+                    <input type="text" class="form-control mt-2" id="title" name="title" placeholder="Topic title" required="required">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label" for="description">Topic description <span class="form-required">*</span></label>
+                    <small class="text-muted d-block pb-2">
+                      Description will be available only on topic page.<br>
+                      Recommended to add not more than 60 words for description.
+                    </small>
+                    <input name="description" type="hidden">
+                    <div id="editor"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label" for="image">Topic image <span class="form-required">*</span></label>
+                    <small class="text-muted d-block mb-2">
+                      <img id='img-upload' style="max-width: 100px; max-height: 100px; display: block; float: left; margin-right: 11px;">
+                      After uploading image will have random title and jpg extension and will be stored into <b>public/media/images/topics</b> folder<br>
+                      Upload square image, preferable 250x250px.<br>
+                      Allowed JPG / PNG. Max size: 10 MB.
+                    </small>
+                    <div class="custom-file">
+                      <input type="file" class="custom-file-input" id="image" name="image" accept="image/*" required="required">
+                      <div class="custom-file-drag">
+                        <h1><i class="fe fe-image"></i><sup style="top: -0.8em;"><i class="fe fe-move" style="font-size: 14px"></i></sup></h1>
+                        Choose or drag image here.
+                        <div class="images-uploaded"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+           <div class="card-footer">
+              <div class="d-flex">
+                <div class="mr-auto">
+                  <button type="submit" class="btn btn-primary">Add new topic</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+{% endblock %}

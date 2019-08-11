@@ -1,0 +1,153 @@
+{#
+  Success signup template - is displayed when is enabled option "Email validation"
+  Block "footer" run after are loaded all js files
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Sign Up{% endblock %}
+
+{% block footer %}
+
+  <script>
+
+    /**
+     * Add jQuery Validation plugin method for a valid password
+     *
+     * Valid passwords contain at least one letter and one number.
+     */
+    $.validator.addMethod('validPassword',
+      function(value, element, param) {
+
+        if (value != '') {
+          if (value.match(/.*[a-z]+.*/i) == null) {
+            return false;
+          }
+          if (value.match(/.*\d+.*/) == null) {
+            return false;
+          }
+        }
+
+        return true;
+      },
+      'Must contain at least one letter and one number'
+    );
+
+    $(document).ready(function() {
+
+      /**
+       * Validate the form
+       */
+      $('#formSignup').validate({
+        rules: {
+          username: {
+          	required: true,
+            remote: '/account/validate-username'
+	        },
+	        email: {
+	          required: true,
+	          email: true,
+	          remote: '/account/validate-email'
+	        },
+	        password: {
+	          required: true,
+	          minlength: 5,
+	        },
+	        terms: {
+	        	required: true,
+	        }
+        },
+        messages: {
+        	username: {
+            remote: 'Username already taken'
+          },
+          email: {
+            remote: 'Email already taken'
+          }
+        },
+        errorPlacement: function ($error, $element) {
+      		
+      		var name = $element.attr("name");
+      		$("#error" + name).append($error);
+	    	}
+      });
+    });
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="page-single">
+  	
+  	<div class="container">
+	    <div class="row mt-5">
+	      <div class="col col-login mx-auto">
+	        <form class="card" action="/signup/new" method="post" id="formSignup">
+	          <div class="card-body p-6">
+	            <div class="card-title">Create new account</div>
+
+	            {% if user.errors is not empty %}
+							  <div class="alert alert-danger" role="alert">
+							  	<button type="button" class="close" data-dismiss="alert"></button>
+									<p>Errors:</p>
+									<ul>
+										{% for error in user.errors %}
+											<li>{{ error }}</li>
+										{% endfor %}
+									</ul>
+								</div>
+							{% endif %}
+
+	            <div class="form-group">
+	              <label class="form-label" for="username">Username <span class="form-required">*</span></label>
+	              <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required="" autofocus="" value="{{ user.username }}">
+	              <span id="errorusername" class="error"></span>
+	            </div>
+
+	            <div class="form-group">
+	              <label class="form-label" for="email">Email address <span class="form-required">*</span></label>
+	              <input type="email" class="form-control" id="email" name="email" placeholder="Enter your real email" required="" value="{{ user.email }}">
+	              <span id="erroremail" class="error"></span>
+	              <small>This email address will be used for confirmation</small>
+	            </div>
+
+	            <div class="form-group">
+	              <label class="form-label" for="password">Password <span class="form-required">*</span></label>
+	              <div class="input-icon">
+	              	<input type="password" class="form-control" id="password" name="password" placeholder="Password" required="">
+	              	<span class="input-icon-addon toogle-password">
+									  <a href="#" onclick="tooglePassword();"><i class="fe fe-eye"></i></a>
+									</span>
+				  			</div>
+				  			<span id="errorpassword" class="error"></span>
+	            </div>
+
+	            <div class="form-group">
+	              <label class="custom-control custom-checkbox">
+	              	<input type="hidden" name="terms" value="0">
+	                <input type="checkbox" name="terms" value="1" class="custom-control-input" required="">
+	                <span class="custom-control-label">Agree the <a href="terms.html">terms and policy</a> <span class="form-required">*</span></span>
+	              </label>
+	              <span id="errorterms" class="error"></span>
+	            </div>
+
+	            <div class="form-footer">
+	              <button type="submit" class="btn btn-primary btn-block">Create new account</button>
+	            </div>
+
+	          </div>
+	        </form>
+
+	        <div class="text-center text-muted">
+	          Already have account? <a href="/signin">Sign in</a>
+	        </div>
+
+	      </div>
+	    </div>
+	  </div>
+	   	  
+	</div>
+
+{% endblock %}

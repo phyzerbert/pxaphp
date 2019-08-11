@@ -1,0 +1,102 @@
+{#
+  Stream template with questions
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}{{ this_page.title }}{% endblock %}
+{% block page_description %}{{ this_page.title }}{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="row">
+
+      	{% include('leftbar.twig') %}
+
+        <div class="col-lg-9 order-lg-2 {% if this_page.menu == 'questions_followed' %}questions_followed{% endif %}">
+
+          {% if this_page.searched %}
+
+            <div class="row col-12 mb-4 pr-0 pl-0 no-gutters justify-content-between">
+              <div class="float-left">
+                <h5 class="pt-3">{{ total_questions }} results for: '{{ this_page.searched }}' in questions</h5>
+              </div>
+
+              <div class="float-right">
+                <div class="dropdown">
+                  <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                    <i class="fe fe-search mr-1"></i> Search in: Questions
+                  </button>
+                  <div class="dropdown-menu">
+                    <a href="/users/search?search={{ this_page.searched }}" class="dropdown-item">Search in Users</a>
+                    <a href="/topics/search?search={{ this_page.searched }}" class="dropdown-item">Search in Topics</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          {% else %}
+
+          	<div class="row col-12 mb-4 pr-0 pl-0 no-gutters justify-content-between">
+          		<div class="float-left">
+          			{% if current_user %}
+          				<a href="/topics/select" class="btn btn-secondary"><i class="fe fe-sliders mr-1"></i> Edit topics</a>
+          			{% endif %}
+          		</div>
+          		
+          		<div class="float-right">
+                    <div class="dropdown">
+                        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                            <i class="fe fe-chevron-down mr-1"></i> Sorting: {{ this_page.order_name }}
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item {% if this_page.order_name == 'Newest' %}font-weight-bold{% endif %}" onclick="sort_questions_by('{{ this_page.url }}', 'newest');">Newest</a>
+                            <a href="#" class="dropdown-item {% if this_page.order_name == 'Most Voted' %}font-weight-bold{% endif %}" onclick="sort_questions_by('{{ this_page.url }}', 'voted');">Most Voted</a>
+                            <a href="#" class="dropdown-item {% if this_page.order_name == 'Most Viewed' %}font-weight-bold{% endif %}" onclick="sort_questions_by('{{ this_page.url }}', 'viewed');">Most Viewed</a>
+                        </div>
+                    </div>
+                </div>
+          	</div>
+
+          {% endif %}
+
+          {% if settings.banner_top_status == 1 %}
+            <div class="max-width-100 row mt-4 mb-4 pl-3 pr-3">
+              {{ settings.banner_top|raw }}
+            </div>
+          {% endif %}
+          
+          {% if questions is not empty %}
+
+            {% for question in questions %}
+
+              {% include('Questions/question.twig') %}
+
+            {% endfor %}
+
+          {% else %}
+
+            <div class="card pt-4 pl-4">
+              <p>No questions found.</p>
+            </div>
+
+          {% endif %}
+
+          {% include('pagination.twig') %}
+
+          {% if current_user %}
+            
+            {% include('Questions/close.twig') %}
+            {% include('Questions/delete.twig') %}
+            {% include('Questions/hide.twig') %}
+
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

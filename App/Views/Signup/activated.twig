@@ -1,0 +1,43 @@
+{#
+  Success activation template - is displayed when user confirm email used at sign p
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Successfully Activated{% endblock %}
+
+{% block body %}
+
+	<div class="page-single">
+  	
+  	<div class="container">
+	    <div class="row mt-5">
+	      <div class="col col-login mx-auto">
+	        <div class="card" >
+	          <div class="card-body p-6">
+
+	          	<div class="text-center">
+	          		<h1><i class="fe fe-check"></i></h1>
+	          		<h4>Success!</h4>
+	          		<hr>
+	          	</div>
+
+
+	            <small>
+	            	Your account is activated!<br>
+	            	You can sign in now using your email and password.<br>
+	            </small>
+
+	            <div class="form-footer">
+	              <a href="/signin" class="btn btn-primary btn-block">Sign in</a>
+	            </div>
+
+    				</div>
+					</div>
+	      </div>
+	    </div>
+	  </div>
+	   	  
+	</div>
+
+{% endblock %}

@@ -1,0 +1,230 @@
+{#
+  Edit Question Modal template
+  Block "footer" is run after is init all js code
+  Tab Size: 2 
+#}
+{% block footer %}
+
+  <script>
+
+    var editModalName = "#editQuestionModal";
+
+    function saveQ() {
+
+      var selectElement = $('#editQuestionForm .selectize').eq(0);
+      var selectize = selectElement.data('selectize');
+
+      if(selectize.items.length < 1) {
+
+        $(editModalName+' .step-sbmt').attr("disabled", true);
+        $("#editQAlert .error_msg").html('Choose at least 1 topic');
+        $("#editQAlert").removeClass('d-none');
+      
+      } else if($(editModalName+' #q_title').val().length < 3) {
+
+        $(editModalName+' .step-sbmt').attr("disabled", true);
+        $("#editQAlert .error_msg").html('Enter question title');
+        $("#editQAlert").removeClass('d-none');
+      
+      } else {
+
+        $("#editQuestionForm").submit();
+      }
+    }
+
+    function editImages() {
+
+      $("#editQuestionImages").removeClass("d-none");
+      $(".editImagesLink").addClass("d-none");
+    }
+
+    $(document).ready(function() {
+
+      $(editModalName+" .custom-file-input").change(function() {
+        $(editModalName+" .images-uploaded").html('');
+        getImage(this, editModalName+" .images-uploaded", {{ settings.question_max_images }});
+      });
+
+      $(editModalName).on('hide.bs.modal', function (e) {
+
+        $('#editQuestionForm .selectize').selectize()[0].selectize.destroy();
+
+        var sel = $(editModalName+' #q_topics');
+        sel.find('option').remove();
+
+        $(".plugin-remove_button").remove();
+      });
+
+      $(editModalName).on('show.bs.modal', function (e) {
+
+        $("#editQuestionImages").addClass("d-none");
+        $(".editImagesLink").removeClass("d-none");
+
+        $('body').bind('dragover', function() {
+          $(editModalName+" #q_description").blur();
+          $(editModalName+" .custom-file-drag").addClass('dragging');
+        });
+
+        $('body').bind('dragleave', function() {
+          $(editModalName+" .custom-file-drag").removeClass('dragging');
+        });
+
+        $('body').bind('drop', function() {
+          $(editModalName+" .custom-file-drag").removeClass('dragging');
+        });
+
+        if ($(editModalName+' #q_topics').has('option').length == 0) {
+
+          var sel = $(editModalName+' #q_topics');
+
+          sel.find('option').remove().end();
+          
+          $.getJSON('/topics/get', {}, function(data) {
+
+            $.each(data, function(index, element) {
+              $('<option>').text(element.title).val(element.id).appendTo(sel);
+            });
+
+            $(editModalName+' .selectize').selectize({
+              plugins: ['remove_button'],
+              create: false,
+              sortField: {
+                field: 'text',
+                direction: 'asc'
+              },
+              dropdownParent: 'body',
+              maxItems: {{ settings.question_max_topics }},
+              onChange: function() {
+                checkSelectedTopicsNumberEdit();
+              },
+              onItemAdd: function() {
+                this.close();
+              },
+            });
+
+          });
+        }
+
+        function checkSelectedTopicsNumberEdit() {
+
+          var selectElement = $('#editQuestionForm .selectize').eq(0);
+          var selectize = selectElement.data('selectize');
+
+          var choosed = selectize.items.length;
+
+          $("#editQuestionForm #q_topics_counter").html(choosed);
+
+          if (choosed > 0) {
+            $(editModalName+' .step-sbmt').attr("disabled", false);
+          } else {
+            $(editModalName+' .step-sbmt').attr("disabled", true);
+          }
+        }
+
+        $(editModalName+' #q_title').keyup(function() {
+
+          var currVal = $(this).val();
+          var newVal = currVal.charAt(0).toUpperCase() + currVal.slice(1, {{ settings.question_max_title }});
+          $(this).val(newVal);
+          $(editModalName+" #q_title_counter").html(newVal.length);
+          if (newVal.length > 3) {
+            $(editModalName+' .step-sbmt').attr("disabled", false);
+          } else {
+            $(editModalName+' .step-sbmt').attr("disabled", true);
+          }
+
+        }).keyup();
+
+        $(editModalName+' #q_description').keyup(function() {
+
+          var currVal = $(this).val();
+          var newVal = currVal.charAt(0).toUpperCase() + currVal.slice(1, {{ settings.question_max_description }});
+          $(this).val(newVal);
+          $(editModalName+" #q_description_counter").html(newVal.length);
+  
+        }).keyup();
+      });
+    });
+
+  </script>
+
+{% endblock %}
+
+<style type="text/css">
+  .selectize-dropdown { z-index: 9999; }
+</style>
+
+<div class="modal fade" id="editQuestionModal" role="dialog" aria-labelledby="editQuestionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editQuestionModalLabel"><i class="fe fe-edit-2 text-primary"></i> Edit question</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form method="post" action="/questions/edit" id="editQuestionForm" enctype="multipart/form-data">
+
+        <input type="hidden" id="edit_question_id" name="question_id" value="0">
+
+        <div class="modal-body">
+
+          <input type="hidden" id="modal_step" value="1">
+
+          <div id="editQAlert" class="alert alert-danger alert-dismissible fade show d-none" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+            <strong>Error!</strong> <span class="error_msg"></span>
+          </div>
+          
+          <div class="row step-1">
+            <div class="col-sm-12">
+
+              <div class="form-group p-2">
+                <label class="form-label mb-0" for="topics">Question topics <span class="form-required">*</span> <pre class="p-1 mb-2 form-label-small"><small><span id="q_topics_counter">0</span>/{{ settings.question_max_topics }}</pre></small></label>
+                <div class="form-group mt-2 mb-0">
+                  <select id="q_topics" class="selectize" name="topics[]" multiple placeholder="Select topics...">
+                  </select>
+                </div>
+              </div>
+            
+              <div class="form-group p-2">
+                <label class="form-label mb-0" for="title">Question title <span class="form-required">*</span> <pre class="p-1 mb-2 form-label-small"><small><span id="q_title_counter">0</span>/{{ settings.question_max_title }}</pre></small></label>
+                <input type="text" class="form-control" id="q_title" name="title" placeholder="Question title" required="required" autofocus="autofocus" maxlength="{{ settings.question_max_title }}">
+              </div>
+
+              <div class="form-group p-2">
+                <label class="form-label mb-0" for="description">Question description <pre class="p-1 mb-2 form-label-small"><small><span id="q_description_counter">0</span>/{{ settings.question_max_description }}</small></pre></label>
+                <textarea class="form-control" id="q_description" name="description" placeholder="Question description" required="required" maxlength="{{ settings.question_max_description }}"></textarea>
+              </div>
+
+              <div id="editQuestionImages" class="d-none">
+
+                <div class="form-group p-2">
+                  <label class="form-label" for="images">Question's images (Up to {{ settings.question_max_images }}). Old images will be removed</label>
+                  <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="images" name="images[]" accept="image/*" required="required" multiple="multiple">
+                    <div class="custom-file-drag">
+                      <h1><i class="fe fe-image"></i><sup style="top: -0.8em;"><i class="fe fe-move" style="font-size: 14px"></i></sup></h1>
+                      Choose or drag images here. Up to {{ settings.question_max_images }} images.
+                      <div class="images-uploaded"></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <div class="modal-steps mr-auto editImagesLink">
+            <small><a href="#" onclick="editImages(); return false;"><i class="fe fe-image"></i> Replace images</a></small>
+          </div>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Close</button>
+          <button type="button" class="btn btn-primary step-sbmt" onclick="saveQ();">Save Question</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

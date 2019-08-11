@@ -1,0 +1,38 @@
+{#
+  Error user template - is displayed when user is not found
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}User was not found{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="row">
+
+      	{% include('leftbar.twig') with { 'page_title': 'User was not found', 'page_active': 'user' } %}
+
+        <div class="col-lg-9 order-lg-2 mt-4">
+
+			    <div class="card p-4 text-center">
+		        
+		       	<div class="big-icon">
+							<i class="fe fe-alert-triangle text-primary"></i>
+						</div>
+		       	
+		       	<p class="mb-1">Seems that this user is not more available...</p>
+		       	<small class="d-block mb-4">Most probably this account was disabled.</small>
+		       	
+		       	<div class="card-footer">
+		       		<a href="/users/all" class="btn btn-primary">View all users</a>
+		       	</div>
+		      </div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

@@ -1,0 +1,9 @@
+Hello,
+
+For last hour you received new notifications on {{ settings.app_name }}:
+
+{% for notification in notifications %}
+	{{ notification }}; 
+{% endfor %}
+
+Open this link to view all notifications: {{ url }}

@@ -1,0 +1,193 @@
+{#
+  Admin Panel. Edit Question template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Edit question. Admin panel{% endblock %}
+
+{% block footer %}
+
+  <script>
+
+    function checkSelectedTopicsNumberEdit() {
+
+      var selectElement = $('#editQuestionForm .selectize').eq(0);
+      var selectize = selectElement.data('selectize');
+
+      var choosed = selectize.items.length;
+
+      $("#editQuestionForm #q_topics_counter").html(choosed);
+    }
+
+    $(document).ready( function() {
+
+      $(".custom-file-input").change(function() {
+        $(".images-uploaded").html('');
+        getImage(this, ".images-uploaded", {{ settings.question_max_images }});
+      });
+
+      $('body').bind('dragover', function() {
+        $("#q_description").blur();
+        $(".custom-file-drag").addClass('dragging');
+      });
+
+      $('body').bind('dragleave', function() {
+        $(".custom-file-drag").removeClass('dragging');
+      });
+
+      $('body').bind('drop', function() {
+        $(".custom-file-drag").removeClass('dragging');
+      });
+
+      if($('#q_topics').has('option').length == 0) {
+
+        var sel = $('#q_topics');
+
+        sel.find('option').remove().end();
+        
+        $.getJSON('/topics/get', {}, function(data) {
+
+          $.each(data, function(index, element) {
+            $('<option>').text(element.title).val(element.id).appendTo(sel);
+          });
+
+          $('.selectize').selectize({
+            plugins: ['remove_button'],
+            create: false,
+            sortField: {
+              field: 'text',
+              direction: 'asc'
+            },
+            dropdownParent: 'body',
+            maxItems: {{ settings.question_max_topics }},
+            onChange: function() {
+              checkSelectedTopicsNumberEdit();
+            },
+            onItemAdd: function() {
+              this.close();
+            },
+          });
+
+          $.getJSON('/questions/get', { 'id': {{ question.id }} }, function(data) {
+
+            var selectElement = $('#editQuestionForm .selectize').eq(0);
+            var selectize = selectElement.data('selectize');
+
+            var topics = [];
+            $.each(data.topics, function(i,e) {
+              topics.push(e.id);
+            });
+
+            if (!!selectize) selectize.setValue(topics);
+
+          });
+
+        });
+
+      }
+
+      $('#q_title').keyup(function() {
+
+        var currVal = $(this).val();
+        var newVal = currVal.charAt(0).toUpperCase() + currVal.slice(1, {{ settings.question_max_title }});
+        $(this).val(newVal);
+        $("#q_title_counter").html(newVal.length);
+
+      }).keyup();
+
+      $('#q_description').keyup(function() {
+
+        var currVal = $(this).val();
+        var newVal = currVal.charAt(0).toUpperCase() + currVal.slice(1, {{ settings.question_max_description }});
+        $(this).val(newVal);
+        $("#q_description_counter").html(newVal.length);
+
+      }).keyup();
+
+    });
+
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          Edit question
+        </h1>
+        <div class="page-options d-flex">
+          <a href="/admin/questions/index" class="btn btn-outline-primary ml-4"><i class="fe fe-arrow-left mr-1"></i>Back to all questions</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <form method="post" action="/admin/questions/save" enctype="multipart/form-data" id="editQuestionForm">
+
+          <input type="hidden" name="question_id" value="{{ question.id }}">
+
+          <div class="card-header">
+            <h4 class="card-title">Question ID: <b class="text-muted">#{{ question.id }}</b></h4>
+          </div>
+          <div class="card-body">
+
+            <div class="form-group p-2">
+              <label class="form-label mb-0" for="topics">Question topics <span class="form-required">*</span> <pre class="p-1 mb-2 form-label-small"><small><span id="q_topics_counter">0</span>/{{ settings.question_max_topics }}</pre></small></label>
+              <div class="form-group mt-2 mb-0">
+                <select id="q_topics" class="selectize" name="topics[]" multiple placeholder="Select topics...">
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group p-2">
+              <label class="form-label mb-0" for="title">Question title <span class="form-required">*</span> <pre class="p-1 mb-2 form-label-small"><small><span id="q_title_counter">0</span>/{{ settings.question_max_title }}</pre></small></label>
+              <input type="text" class="form-control" id="q_title" name="title" placeholder="Question title" required="required" autofocus="autofocus" maxlength="{{ settings.question_max_title }}" value="{{ question.title }}">
+            </div>
+
+            <div class="form-group p-2">
+              <label class="form-label mb-0" for="description">Question description <pre class="p-1 mb-2 form-label-small"><small><span id="q_description_counter">0</span>/{{ settings.question_max_description }}</small></pre></label>
+              <textarea class="form-control" id="q_description" name="description" placeholder="Question description" required="required" maxlength="{{ settings.question_max_description }}">{{ question.description }}</textarea>
+            </div>
+
+            <div class="editImagesLink">
+              <small><a href="#" onclick="editImages(); return false;"><i class="fe fe-image"></i> Replace images</a></small>
+            </div>
+
+            <div id="editQuestionImages" class="d-none">
+
+              <div class="form-group p-2">
+                <label class="form-label" for="images">Question's images (Up to {{ settings.question_max_images }}). Old images will be removed</label>
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input" id="images" name="images[]" accept="image/*" multiple="multiple">
+                  <div class="custom-file-drag">
+                    <h1><i class="fe fe-image"></i><sup style="top: -0.8em;"><i class="fe fe-move" style="font-size: 14px"></i></sup></h1>
+                    Choose or drag images here. Up to {{ settings.question_max_images }} images.
+                    <div class="images-uploaded"></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="card-footer">
+            <div class="d-flex">
+              <div class="mr-auto">
+                <button type="submit" class="btn btn-primary">Save question</button>
+              </div>
+            </div>
+          </div>
+          
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{#
+  All topics page template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}All Topics{% endblock %}
+{% block page_description %}All Most Interested Topics{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="row">
+
+        {% include('leftbar.twig') with { 'page_title': 'All Topics', 'page_active': 'all_topics' } %}
+
+        <div class="col-lg-9 order-lg-2 mt-4">
+
+        	{% if this_page.searched %}
+
+						<div class="row col-12 mb-4 pr-0 pl-0 no-gutters justify-content-between">
+	        		<div class="float-left">
+								<h5 class="pt-3">{{ topics_number }} results for: '{{ this_page.searched }}' in topics</h5>
+							</div>
+
+							<div class="float-right">
+								<div class="dropdown">
+								  <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+								    <i class="fe fe-search mr-1"></i> Search in: Topics
+								  </button>
+								  <div class="dropdown-menu">
+								    <a href="/questions/search?search={{ this_page.searched }}" class="dropdown-item">Search in Questions</a>
+								    <a href="/users/search?search={{ this_page.searched }}" class="dropdown-item">Search in Users</a>
+								  </div>
+								</div>
+							</div>
+						</div>
+
+	        {% endif %}
+
+        	{% if settings.banner_top_status == 1 %}
+            <div class="max-width-100 row mb-4 pl-3 pr-3">
+              {{ settings.banner_top|raw }}
+            </div>
+          {% endif %}
+
+			    <div class="card topics_list">
+		        
+		        <div class="pt-3">
+
+		          {% if topics is not empty %}
+
+		            {% for topic in topics %}
+
+		            	{% include('Topics/topic.twig') %}
+
+		            {% endfor %}
+
+		          {% else %}
+
+		            <p class="p-4">No topics which you can view at the moment.</p>
+
+		          {% endif %}
+
+		        </div>
+		       
+		      </div>
+
+		      {% include('pagination.twig') %}
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

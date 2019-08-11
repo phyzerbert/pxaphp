@@ -1,0 +1,87 @@
+{#
+  View single topic template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}{{ topic.title }}{% endblock %}
+{% block page_description %}{{ topic.description|striptags }}{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="row">
+
+      	{% include('leftbar.twig') with { 'page_title': topic.title, 'page_active': 'topic' } %}
+
+        <div class="col-lg-9 order-lg-2 mt-4">
+
+			    <div class="card topics_list">
+		        
+		        <div class="topic p-4 border-bottom">
+						  <div class="d-flex flex-column p-4">
+						  	<div>
+						  		<a href="/topic/{{ topic.url }}" class="topic-image d-block float-left mr-2">
+										<img src="/media/images/topics/{{ topic.image }}" class="rounded">
+									</a>
+									<div class="float-right">
+										{% if current_user %}
+											<button id="unfollow_{{ topic.id }}" onclick="unfollow_topic({{ topic.id }});" class="followed-btn btn btn-primary btn-sm {% if not is_following %}d-none{% endif %}">
+	                      <span class="following"><span class="fe fe-check"></span> Following</span>
+	                      <span class="unfollow"><span class="fe fe-slash"></span> Unfollow</span>
+	                    </button>
+								    	<button id="follow_{{ topic.id }}" onclick="follow_topic({{ topic.id }});" class="follow-btn btn btn-outline-primary btn-sm {% if is_following %}d-none{% endif %}">
+	                      <span class="fe fe-check"></span> Follow
+	                    </button>
+	                  {% else %}
+											<a href="/signup" class="btn btn-outline-primary btn-sm">
+	                      <span class="fe fe-check"></span> Sign Up to Follow
+	                    </a>
+	                  {% endif %}
+                  </div>
+									<div>
+						    		<h4 class="mt-1 mb-2"><a href="/topic/{{ topic.url }}">{{ topic.title }}</a></h4>
+						    		<small class="d-block text-muted"><span id="topic_{{ topic.id }}_followers">{{ topic.followers }}</span> followers and {{ total_questions }} questions</small>
+						    	</div>
+						    </div>
+						    <div class="mt-1">
+						  		{% autoescape 'html' %}{{ topic.description | raw }}{% endautoescape %}
+						  	</div>
+						  </div>
+						</div>
+		       
+		      </div><!-- /card -->
+
+		      {% if questions is not empty %}
+
+		        {% for question in questions %}
+
+		          {% include('Questions/question.twig') %}
+
+		        {% endfor %}
+
+		      {% else %}
+
+						<div class="card pt-4 pl-4">
+		        	<p>No questions for that topic.</p>
+		        </div>
+
+		      {% endif %}
+
+		      {% include('pagination.twig') %}
+
+		      {% if current_user %}
+            
+            {% include('Questions/close.twig') %}
+            {% include('Questions/delete.twig') %}
+            {% include('Questions/hide.twig') %}
+
+          {% endif %}
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

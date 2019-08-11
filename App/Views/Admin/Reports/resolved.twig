@@ -1,0 +1,126 @@
+{#
+  Admin Panel. Resolved reports template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Resolved reports. Admin panel{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          {% if(search) %}
+            Reports: <b>{{search}}</b> 
+          {% else %}
+            Reviewed Reports
+          {% endif %}
+        </h1>
+        <div class="page-subtitle">
+          {% if(search) %}
+            {{ reports_number }} results found
+          {% else %}
+            {{ paginator.offset + 1 }} - {{ reports|length }} of {{ reports_number }} reports
+          {% endif %}
+        </div>
+        <div class="page-options d-flex">
+          <div>
+            <form method="get" action="/admin/reports/resolved">
+              <div class="input-icon ml-2">
+                <span class="input-icon-addon">
+                  <i class="fe fe-search"></i>
+                </span>
+                <input type="text" class="form-control w-10" name="search" placeholder="Search report by message" value={{ search }}>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        
+        <div class="card-header">
+          <h3 class="card-title">Reports</h3>
+          <a href="/admin/reports/index" class="ml-auto btn btn-outline-secondary btn-sm">View Unreviewed</a>
+        </div>
+
+        {% if reports is not empty %}
+          <div class="table-responsive">
+            <table class="table card-table table-vcenter">
+              <thead>
+                <tr>
+                  <th class="w-1">ID</th>
+                  <th class="w-1">User</th>
+                  <th>Reported</th>
+                  <th>Message</th>
+                  <th class="w-2"></th>
+                </tr>
+              </thead>
+              <tbody>
+
+                {% for report in reports %}
+
+                  <tr>
+
+                    <td class="text-muted">{{ report.id }}</td>
+                    <td>
+                      <div class="text-center">
+                        <a href="/user/{{ report.user.username }}" target="_blank"><span class="avatar avatar-xl m-1" {% if report.user.photo %}style="color: transparent; background-image: url(/media/images/users/{{ report.user.photo }})"{% endif %}>{{ report.user.username|slice(0, 2)|upper }}</span></a>
+                        <br>
+                        <a href="/user/{{ report.user.username }}" target="_blank"><small>{{ report.user.username|capitalize }}</small></a>
+                      </div>
+                    </td>
+                    <td>
+                      {% if report.question_id > 0 %}
+                        <small><a href="/question/{{ report.question.url }}" target="_blank"><i class="fe fe-copy"></i> Open Question in new tab</a></small><br>
+                        <div style="width: 400px; overflow: scroll;" class="border p-1">{{ report.question.title }}</div>
+                      {% endif %}
+                      {% if report.answer_id > 0%}
+                        <small><a href="/question/{{ report.answer.question.url }}?answer_id={{ report.answer.id }}" target="_blank"><i class="fe fe-copy"></i> Open Answer in new tab</a></small><br>
+                        <div style="width: 400px; overflow: scroll;" class="border p-1">{% autoescape 'html' %}{{ report.answer.answer | raw }}{% endautoescape %}</div>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <p class="mb-0">{{ report.message }}</p>
+                      <small class="text-muted">{{ report.timestamp|timeago }}</small>
+                    </td>
+                    <td>
+                      <p class="text-muted btn mt-3 mb-0"><i class="fe fe-check"></i> Resolved</p>
+
+                      <form method="post" action="/admin/reports/delete">
+                          <input type="hidden" name="id" value="{{ report.id }}">
+                          <button type="submit" class="mt-1 btn btn-outline-danger btn-sm"><i class="fe fe-trash-2"></i> Delete Report</button>
+                        </form>
+                    </td>
+
+                  </tr>
+                  
+                {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+
+        {% else %}
+
+          <div class="p-4">
+            {% if(search) %}
+              <p>Nothing found for <b>{{ search }}</b>.</p>
+            {% else %}
+              <p>There is not any report yet.</p>
+            {% endif %}
+          </div>
+
+        {% endif %}
+
+      </div>
+
+      {% include('pagination.twig') %}
+
+    </div>
+
+  </div>
+
+{% endblock %}

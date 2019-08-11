@@ -1,0 +1,34 @@
+{#
+  Pagination template. Used for any pagination in app.
+  Require $page['url'] parameter for creating links with pagination.
+  Tab Size: 2 
+#}
+{% if paginator.total > 1 %}
+
+  <div class="card pt-4">
+    
+    <nav aria-label="Navigation">
+      <ul class="pagination justify-content-center">
+
+        <li class="page-item {% if paginator.previous == null %}disabled{% endif %}">
+          <a class="page-link" {% if paginator.previous == null %}href="#" tabindex="-1"{% else %}href="{{ paginator.previousUrl }}"{% endif %}>Previous</a>
+        </li>
+
+        {% for page in paginator.pagination %}
+          {% if page.url %}
+              <li class="page-item {{ page.isCurrent ? 'active' : '' }}"><a href="{{ page.url }}" class="page-link">{{ page.num }}</a></li>
+          {% else %}
+              <li class="page-item disabled"><a class="page-link">{{ page.num }}</a></li>
+          {% endif %}
+        {% endfor %}
+
+        <li class="page-item {% if paginator.next == null %}disabled{% endif %}">
+          <a class="page-link" {% if paginator.next == null %}href="#" tabindex="-1"{% else %}href="{{ paginator.nextUrl }}"{% endif %}>Next</a>
+        </li>
+        
+      </ul>
+    </nav>
+
+  </div>
+
+{% endif %}

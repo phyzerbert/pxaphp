@@ -1,0 +1,11 @@
+<h4>Hello,</h4>
+
+<p>For last hour you received new notifications on {{ settings.app_name }}:</p>
+
+<ul>
+{% for notification in notifications %}
+	<li>{{ notification }}</li>
+{% endfor %}
+</ul>
+
+<p><a href="{{ url }}">Click here</a> to view all notifications.</p>

@@ -1,0 +1,219 @@
+{#
+  Admin Panel. Reports template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Reports. Admin panel{% endblock %}
+
+{% block footer %}
+
+  <script>
+
+    function hideQuestion(id) {
+      
+      if(id > 0) {
+        $("#hideQuestionId").val(id);
+        $('#hideQuestionModal').modal('show');
+      }
+    }
+
+    function hideAnswer(id) {
+      
+      if(id > 0) {
+        $("#hideAnswerId").val(id);
+        $('#hideAnswerModal').modal('show');
+      }
+    }
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          {% if(search) %}
+            Reports: <b>{{search}}</b> 
+          {% else %}
+            Unreviewed Reports
+          {% endif %}
+        </h1>
+        <div class="page-subtitle">
+          {% if(search) %}
+            {{ reports_number }} results found
+          {% else %}
+            {{ paginator.offset + 1 }} - {{ reports|length }} of {{ reports_number }} reports
+          {% endif %}
+        </div>
+        <div class="page-options d-flex">
+          <div>
+            <form method="get" action="/admin/reports/index">
+              <div class="input-icon ml-2">
+                <span class="input-icon-addon">
+                  <i class="fe fe-search"></i>
+                </span>
+                <input type="text" class="form-control w-10" name="search" placeholder="Search report by message" value={{ search }}>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        
+        <div class="card-header">
+          <h3 class="card-title">Reports</h3>
+          <a href="/admin/reports/resolved" class="ml-auto btn btn-outline-secondary btn-sm">View Reviewed</a>
+        </div>
+
+        {% if reports is not empty %}
+          <div class="table-responsive">
+            <table class="table card-table table-vcenter">
+              <thead>
+                <tr>
+                  <th class="w-1">ID</th>
+                  <th class="w-1">User</th>
+                  <th>Reported</th>
+                  <th>Message</th>
+                  <th class="w-2"></th>
+                </tr>
+              </thead>
+              <tbody>
+
+                {% for report in reports %}
+
+                  <tr>
+
+                    <td class="text-muted">{{ report.id }}</td>
+                    <td>
+                      <div class="text-center">
+                        <a href="/user/{{ report.user.username }}" target="_blank"><span class="avatar avatar-xl m-1" {% if report.user.photo %}style="color: transparent; background-image: url(/media/images/users/{{ report.user.photo }})"{% endif %}>{{ report.user.username|slice(0, 2)|upper }}</span></a>
+                        <br>
+                        <a href="/user/{{ report.user.username }}" target="_blank"><small>{{ report.user.username|capitalize }}</small></a>
+                      </div>
+                    </td>
+                    <td>
+                      {% if report.question_id > 0 %}
+                        <small><a href="/question/{{ report.question.url }}" target="_blank"><i class="fe fe-copy"></i> Open Question in new tab</a></small><br>
+                        <div style="width: 400px; overflow: scroll;" class="border p-1">{{ report.question.title }}</div>
+                      {% endif %}
+                      {% if report.answer_id > 0%}
+                        <small><a href="/question/{{ report.answer.question.url }}?answer_id={{ report.answer.id }}" target="_blank"><i class="fe fe-copy"></i> Open Answer in new tab</a></small><br>
+                        <div style="width: 400px; overflow: scroll;" class="border p-1">{% autoescape 'html' %}{{ report.answer.answer | raw }}{% endautoescape %}</div>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <p class="mb-0">{{ report.message }}</p>
+                      <small class="text-muted">{{ report.timestamp|timeago }}</small>
+                    </td>
+                    <td>
+                      {% if report.status == 0 %}
+                        <form method="post" action="/admin/reports/close">
+                          <input type="hidden" name="id" value="{{ report.id }}">
+                          <button type="submit" class="btn btn-outline-secondary btn-sm"><i class="fe fe-check"></i> Mark as resolved</button>
+                        </form>
+                      {% else %}
+                        <p class="text-muted btn mt-3"><i class="fe fe-check"></i> Resolved</p>
+                      {% endif %}
+
+                      {% if report.question_id > 0 and report.question.active == 1 %}
+                        <a href="javascript:hideQuestion({{ report.question_id }})" class="mt-2 btn btn-outline-danger btn-sm"><i class="fe fe-trash-2"></i> Hide Question</a>
+                      {% endif %}
+                      {% if report.question_id > 0 and report.question.active == 0 %}
+                        <a class="btn">Hidden Question</a>
+                      {% endif %}
+                      {% if report.answer_id > 0 and report.answer.active == 1 %}
+                        <a href="javascript:hideAnswer({{ report.answer_id }})" class="mt-2 btn btn-outline-danger btn-sm"><i class="fe fe-trash-2"></i> Hide Answer</a>
+                      {% endif %}
+                      {% if report.answer_id > 0 and report.answer.active == 0 %}
+                        <a class="btn">Hidden Answer</a>
+                      {% endif %}
+                    </td>
+
+                  </tr>
+                  
+                {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+
+        {% else %}
+
+          <div class="p-4">
+            {% if(search) %}
+              <p>Nothing found for <b>{{ search }}</b>.</p>
+            {% else %}
+              <p>There is not any report yet.</p>
+            {% endif %}
+          </div>
+
+        {% endif %}
+
+      </div>
+
+      {% include('pagination.twig') %}
+
+    </div>
+
+  </div>
+
+  <div class="modal fade" id="hideQuestionModal" tabindex="-1" role="dialog" aria-labelledby="hideQuestionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <form method="post" action="/admin/questions/hide">
+          <div class="modal-body text-center">
+            <h1><i class="fe fe-trash-2 pt-4 text-danger"></i></h1>
+            <h5 class="modal-title">Do you confirm that want to hide this question?</h5>
+           <small>After hidding - it will not be available for users.<br> But you can restore it later from hidden questions page.</small>
+            <div class="form-group mt-4" style="width:500px; margin:0 auto">
+              <label class="custom-switch">
+                <input type="checkbox" name="send_notification" class="custom-switch-input" checked="checked">
+                <span class="custom-switch-indicator"></span>
+                <span class="custom-switch-description"><small>Sent notification about removed question to question's author</small></span>
+              </label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <input type="hidden" name="redirect_url" value="/admin/reports/index">
+            <input type="hidden" id="hideQuestionId" name="id" value="0">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-danger">Hide</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="hideAnswerModal" tabindex="-1" role="dialog" aria-labelledby="hideAnswerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <form method="post" action="/admin/answers/hide">
+          <div class="modal-body text-center">
+            <h1><i class="fe fe-trash-2 pt-4 text-danger"></i></h1>
+            <h5 class="modal-title">Do you confirm that want to hide this answer?</h5>
+            <small>After hiding - it will not be available for users.<br> But you can restore it later from hidden answers page.</small>
+            <div class="form-group mt-4" style="width:500px; margin:0 auto">
+              <label class="custom-switch">
+                <input type="checkbox" name="send_notification" class="custom-switch-input" checked="checked">
+                <span class="custom-switch-indicator"></span>
+                <span class="custom-switch-description"><small>Sent notification about removed answer to question's author</small></span>
+              </label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <input type="hidden" name="redirect_url" value="/admin/reports/index">
+            <input type="hidden" id="hideAnswerId" name="id" value="0">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-danger">Hide</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

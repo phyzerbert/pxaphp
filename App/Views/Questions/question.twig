@@ -1,0 +1,103 @@
+{#
+  Question template displayed in stream
+  Tab Size: 2 
+#}
+<div class="card post" id="question_{{ question.id }}" {% if question.votes < -10 %}style="opacity: 0.5;"{% endif %}>
+
+  <div class="card-body">
+
+  	<div class="card-status card-status-left {% if question.is_closed == 1 %}bg-gray-light{% elseif question.user_id == current_user.id %}bg-blue-lighter{% elseif question.is_following %}bg-yellow-lighter{% elseif question.answers == 0 %}bg-red-lighter{% else %}bg-gray-lighter{% endif %}"></div>
+
+  	<div class="tags mb-2">
+    	{% for this_topic in question.topics %}
+				<a href="/topic/{{ this_topic.url }}" class="tag">{{ this_topic.title }}</a>
+    	{% endfor %}
+    </div>
+
+    <h1 class="mb-2"><a href="/question/{{ question.url }}">{{ question.title }}</a></h1>
+    <small>{% autoescape 'html' %}{{ question.description | raw }}{% endautoescape %}</small>
+
+    <div class="question-images mt-2 mb-2">
+    	{% for this_image in question.images %}
+				<a href="/media/images/questions/{{ this_image.image }}" class="image-link"><img src="/media/images/questions/{{ this_image.image }}" alt="{{ question.title }}" class="img-thumbnail" /></a>
+    	{% endfor %}
+    </div>
+
+    <div class="mt-4">
+    	<small class="text-muted"><a href="/user/{{ question.author.username }}"><span class="avatar avatar-sm" {% if question.author.photo %}style="color: transparent; background-image: url(/media/images/users/{{ question.author.photo }})"{% endif %}>{{ question.author.username|slice(0, 2)|upper }}</span></a> <a href="/user/{{ question.author.username }}">{{ question.author.username|capitalize }}</a> asked on {{ question.added_at|date('d F Y, H:i') }}</small>
+    </div>
+
+    <div class="mt-4">
+			<small><a href="/question/{{ question.url }}"><b>{{ question.answers }}</b> answers</a> / <b>{{ question.votes }}</b> votes / <b>{{ question.views }}</b> views</small>
+    </div>
+
+  </div>
+
+  <div class="card-footer">
+
+  	{% if current_user %}
+
+			{% if question.is_closed == 0 %}
+				<a href="/question/{{ question.url }}#add_answer" class="btn btn-outline-primary btn-sm" id="answer_btn_{{ question.id }}"><i class="fe fe-edit"></i> Answer Question</a>
+			{% else %}
+				<a href="/question/{{ question.url }}" class="btn btn-outline-secondary btn-sm"><i class="fe fe-check"></i> Closed Question</a>
+			{% endif %}
+
+			{% if current_user.id == question.user_id %}
+				<div class="dropdown">
+				  <button type="button" class="btn btn-outline-secondary dropdown-toggle btn-sm" data-toggle="dropdown">
+				    {% if question.is_closed == 0 %}<i class="fe fe-edit-2 can_close"></i> <i class="fe fe-more-vertical can_close"></i> <i class="fe fe-lock can_close"></i> <i class="fe fe-more-vertical can_close"></i>{% endif %} <i class="fe fe-trash-2 i-danger"></i>
+				  </button>
+				  <div class="dropdown-menu">
+				    {% if question.is_closed == 0 %}
+				    	<a class="dropdown-item can_close" href="#" onclick="edit_question({{ question.id }}); return false;"><i class="fe fe-edit-2"></i> Edit Question</a>
+				    	<a class="dropdown-item can_close" href="#" onclick="close_question({{ question.id }}); return false;"><i class="fe fe-lock"></i> Close Question</a>
+				   	{% endif %}
+				    <a class="dropdown-item" href="#" onclick="delete_question({{ question.id }}); return false;"><i class="fe fe-trash-2 i-danger"></i> Delete Question</a>
+				  </div>
+				</div>
+
+			{% else %}
+
+				<!-- Follow Question -->
+				<button id="unfollow_{{ question.id }}" onclick="unfollow_question({{ question.id }});" class="followed-btn btn btn-outline-warning btn-sm {% if not question.is_following %}d-none{% endif %}">
+          <span class="following"><span class="fe fe-star"></span> Following</span>
+          <span class="unfollow"><span class="fe fe-slash"></span> Unfollow</span>
+        </button>
+	    	<button id="follow_{{ question.id }}" onclick="follow_question({{ question.id }});" class="follow-btn btn btn-outline-secondary btn-sm {% if question.is_following %}d-none{% endif %}">
+          <i class="fe fe-star i-gold"></i> Follow Question
+        </button>
+        <!-- /Follow Question -->
+
+				<div class="dropdown">
+				  <button type="button" class="btn btn-outline-secondary dropdown-toggle btn-sm" data-toggle="dropdown">
+				    <i class="fe fe-eye-off"></i> <i class="fe fe-more-vertical"></i> <i class="fe fe-alert-triangle i-danger"></i>
+				  </button>
+				  <div class="dropdown-menu">
+				    <a class="dropdown-item" href="#" onclick="hide_question({{ question.id }}); return false;"><i class="fe fe-eye-off"></i> Hide Question</a>
+				    <a class="dropdown-item" href="#" onclick="report_question({{ question.id }}); return false;"><i class="fe fe-alert-triangle i-danger"></i> Report Question</a>
+				  </div>
+				</div>
+			{% endif %}
+
+			<div class="dropdown share-links">
+				<button type="button" class="btn btn-outline-secondary dropdown-toggle btn-sm" data-toggle="dropdown">
+				  <i class="fe fe-share-2"></i> Share
+				</button>
+				<div class="dropdown-menu">
+			    <a class="dropdown-item" href="https://www.facebook.com/sharer.php?u={{ ('/question/' ~ question.url) | include_path_url }}" target="_blank" id="facebook">Facebook</a>
+			    <a class="dropdown-item" href="https://twitter.com/share?text={{ question.title }}&url={{ ('/question/' ~ question.url) | include_path_url }}" target="_blank" id="twitter">Twitter</a>
+			    <a class="dropdown-item" href="https://pinterest.com/pin/create/button/?url={{ ('/question/' ~ question.url) | include_path_url }}&description={{ question.title }}" class="pin-it-button" count-layout="horizontal" target="_blank" id="pinterest">Pinterest</a>
+			    <a class="dropdown-item" href="https://plus.google.com/share?url={{ ('/question/' ~ question.url) | include_path_url }}" target="_blank" id="googleplus">Google+</a>
+			    <a class="dropdown-item" href="https://www.linkedin.com/shareArticle?mini=true&url={{ ('/question/' ~ question.url) | include_path_url }}&title={{ question.title }}" target="_blank" id="linkedin">LinkedIn</a>
+			    <a class="dropdown-item" href="whatsapp://send?&text={{ question.title }} {{ ('/question/' ~ question.url) | include_path_url }}" data-action="share/whatsapp/share" target="_blank" id="whatsapp">WhatsApp</a>
+			  </div>
+			</div>
+
+		{% else %}
+			<a href="/signin" class="btn btn-outline-primary btn-sm mr-1">Sign In</a> <small>or</small>
+			<a href="/signup" class="btn btn-outline-primary btn-sm mr-1 ml-1">Sign Up</a> <small>to answer and follow questions.</small>
+		{% endif %}
+  </div>
+  
+</div>

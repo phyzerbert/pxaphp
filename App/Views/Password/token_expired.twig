@@ -1,0 +1,39 @@
+{#
+  Expired token template which is displayed when someone try to reset page with old token
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Forgot password{% endblock %}
+
+{% block body %}
+	
+	<div class="page-single">
+  	
+  	<div class="container">
+      <div class="row mt-8">
+        <div class="col col-login mx-auto">
+          <div class="card">
+            <div class="card-body p-6">
+              
+              <div class="card-title">Request password reset</div>
+                
+              <div class="form-group">
+                <small>
+                  Password reset link invalid or expired, please click <a href="/password/forgot">here</a> to request another one.<br>
+                </small>
+              </div>
+
+              <div class="form-footer">
+                <a href="/password/forgot" class="btn btn-primary btn-block" tabindex="1"> New reset password request</a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+	   	  
+	</div>
+
+{% endblock %}

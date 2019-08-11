@@ -1,0 +1,146 @@
+{#
+  Admin Panel. Edit Answer template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Edit answer. Admin panel{% endblock %}
+
+{% block footer %}
+
+  <script type="text/javascript" src="/media/vendor/Quill/image-resize.min.js"></script>
+  <script type="text/javascript" src="/media/vendor/Quill/video-resize.min.js"></script>
+  <script type="text/javascript" src="/media/vendor/Quill/image-upload.js"></script>
+  <script type="text/javascript" src="/media/vendor/Quill/quill.mention.min.js"></script>
+
+  <script>
+
+    $(document).ready( function() {
+
+      var quill_answer = new Quill('#editor_answer', {
+        modules: {
+          toolbar: [
+            [{ header: [3, 4, 5, 6, false], }],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            ['bold', 'italic', 'underline', 'code-block', 'link', 'image', 'video'],
+          ],
+          imageResize: {
+            displaySize: true
+          },
+          videoResize: {
+          },
+          imageUpload: {
+            url: "/answers/upload-image",
+            method: "POST", 
+            headers: {},
+            callbackOK: (serverResponse, next) => {
+              next(serverResponse);   
+            },
+            callbackKO: (serverError) => {
+              console.log(serverError);
+            }
+          },
+          mention: {
+            allowedChars: /^[0-9A-Z_a-z]*$/,
+            mentionDenotationChars: ["@"],
+            source: function (searchTerm, renderList, mentionChar) {
+              let values = [ { id: 1, value: searchTerm }, ];
+
+              if (searchTerm.length === 0) {
+                renderList(values, searchTerm);
+              } else {
+                const matches = [];
+                for (i = 0; i < values.length; i++)
+                  if (~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())) matches.push(values[i]);
+                renderList(matches, searchTerm);
+              }
+            }
+          }
+        },
+        placeholder: 'Your answer',
+        theme: 'snow'
+      });
+
+      quill_answer.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
+
+        var regex = /https?:\/\/[^\s]+/g;
+        if(typeof(node.data) !== 'string') return;
+        var matches = node.data.match(regex);
+
+        if(matches && matches.length > 0) {
+          var ops = [];
+          var str = node.data;
+          matches.forEach(function(match) {
+            var split = str.split(match);
+            var beforeLink = split.shift();
+            ops.push({ insert: beforeLink });
+            ops.push({ insert: match, attributes: { link: match } });
+            str = split.join(match);
+          });
+          ops.push({ insert: str });
+          delta.ops = ops;
+        }
+
+        return delta;
+      });
+
+      var form = document.querySelector('#editAnswerForm');
+
+      form.onsubmit = function() {
+
+        var answer = document.querySelector('input[name=new_answer]');
+        answer.value = quill_answer.root.innerHTML;
+      };
+
+    });
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          Edit answer
+        </h1>
+        <div class="page-options d-flex">
+          <a href="/admin/answers/index" class="btn btn-outline-primary ml-4"><i class="fe fe-arrow-left mr-1"></i>Back to all answers</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <form method="post" action="/admin/answers/save" enctype="multipart/form-data" id="editAnswerForm">
+
+          <input type="hidden" name="answer_id" value="{{ answer.id }}">
+
+          <div class="card-header">
+            <h4 class="card-title">Answer ID: <b class="text-muted">#{{ answer.id }}</b></h4>
+          </div>
+          <div class="card-body">
+
+            <div class="card-body p-4">
+              <input id="new_answer" name="new_answer" type="hidden">
+              <div id="editor_answer">{{ answer.answer|raw }}</div>
+            </div>
+
+          </div>
+
+          <div class="card-footer">
+            <div class="d-flex">
+              <div class="mr-auto">
+                <button type="submit" class="btn btn-primary">Save answer</button>
+              </div>
+            </div>
+          </div>
+          
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+
+{% endblock %}

@@ -1,0 +1,423 @@
+{#
+  Admin Panel. Settings page template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Settings. Admin panel{% endblock %}
+
+{% block footer %}
+
+  <script type="text/javascript" src="/media/vendor/Selectize/selectize.min.js?v=0.12.6"></script>
+
+  <script>
+
+      $(document).ready(function() {
+
+        /**
+         * Show Mailgun settings when enable it
+         */
+        $('#email_option').change(function(){
+          if($('#email_option').val() == '2') {
+            $('.mailgun').hide(); 
+            $('.phpmailer').show(); 
+          } else if($('#email_option').val() == '1') {
+            $('.phpmailer').hide(); 
+            $('.mailgun').show(); 
+          } else {
+            $('.mailgun').hide(); 
+            $('.phpmailer').hide(); 
+          }
+        });
+
+        /**
+         * Show CRON email notifications
+         */
+        $('#email_notifications').change(function(){
+          if($('#email_notifications').val() == '2') {
+            $('.cron_notifications').show();
+          } else {
+            $('.cron_notifications').hide();
+          }
+        });
+
+        /**
+         * Banned words as tags
+         */
+        $('.selectize').selectize({
+          plugins: ['remove_button'],
+          delimiter: ',',
+          persist: false,
+          create: function(input) {
+            return {
+              value: input,
+              text: input
+            }
+          }
+        });
+
+      });
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          App Settings
+        </h1>
+      </div>
+
+      <div class="row col-sm-12">
+
+        <div class="card">
+
+          <form method="post" action="/admin/dashboard/save">
+
+            <div class="card-header pt-4">
+        
+              <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                <li class="nav-item">
+                  <a class="btn btn-sm nav-link active" id="pills-application-tab" data-toggle="pill" href="#pills-application" role="tab" aria-controls="pills-application" aria-selected="true">General</a>
+                </li>
+                <li class="nav-item">
+                  <a class="btn btn-sm nav-link" id="pills-questions-tab" data-toggle="pill" href="#pills-questions" role="tab" aria-controls="pills-questions" aria-selected="true">Questions</a>
+                </li>
+                <li class="nav-item">
+                  <a class="btn btn-sm nav-link" id="pills-email-tab" data-toggle="pill" href="#pills-email" role="tab" aria-controls="pills-email" aria-selected="false">Email</a>
+                </li>
+                <li class="nav-item">
+                  <a class="btn btn-sm nav-link" id="pills-js-tab" data-toggle="pill" href="#pills-js" role="tab" aria-controls="pills-js" aria-selected="false">Ads &amp; Analytics</a>
+                </li>
+              </ul>
+
+            </div>
+
+            <div class="card-body">
+
+              <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-application" role="tabpanel" aria-labelledby="pills-application-tab">
+                  
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="app_name">Application name <span class="form-required">*</span></label>
+                        <small class="text-muted">It is disaplyed on each page at left side on navigation bar. Try to choose short title to not break interface.</small>
+                        <input type="text" class="form-control mt-2" id="app_name" name="app_name" placeholder="Application name" value="{{ app_settings.app_name }}" required="required">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <div class="form-label mb-0" for="email_activation">Activation requirement</div>
+                        <small class="text-muted">If option is switched on - all new users will need to confirm their email addresses. Otherwise all new users are automatically confirmed. Is recommended to turn option on to avoid fraud accounts - but check if emails are sent without issues.</small>
+                        <label class="d-block custom-switch mt-2">
+                          <input type="checkbox" name="email_activation" id="email_activation" class="custom-switch-input" {% if(app_settings.email_activation == 1) %}checked="checked"{% endif %}>
+                          <span class="custom-switch-indicator"></span>
+                          <span class="custom-switch-description">Require activation</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="per_page_admin">Admin panel: items per page <span class="form-required">*</span></label>
+                        <small class="text-muted">Number of items per page in admin panel. As high value is - as more time is loaded page and as more results per page will be.</small>
+                        <input type="number" class="form-control mt-2" id="per_page_admin" name="per_page_admin" placeholder="Items per page" value="{{ app_settings.per_page_admin }}" required="required">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="per_page_user">Users App: items per page <span class="form-required">*</span></label>
+                        <small class="text-muted">Number of items per page in application (excluding admin panel). As high value is - as more time is loaded page and as more results per page will be. Recommended value is 10.</small>
+                        <input type="number" class="form-control mt-2" id="per_page_user" name="per_page_user" placeholder="Items per page" value="{{ app_settings.per_page_user }}" required="required">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="banned_words">Banned words</label>
+                        <small class="text-muted">List of words which will be removed when ask or answer question. <br><strong>E.g: word1, word2, word3, word4</strong></small>
+                        <textarea class="form-control mt-2 selectize" id="banned_words" name="banned_words" placeholder="word1, word2, word3, word4">{{ app_settings.banned_words }}</textarea>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="tab-pane fade" id="pills-questions" role="tabpanel" aria-labelledby="pills-questions-tab">
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="question_price">Questions price <span class="form-required">*</span></label>
+                        <small class="text-muted">Question's price in points. 0 for disabling requiring points.</small>
+                        <input type="number" class="form-control mt-2" id="question_price" name="question_price" placeholder="Question's price in points" value="{{ app_settings.question_price }}" required="required">
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="question_max_title">Questions max title length <span class="form-required">*</span></label>
+                        <small class="text-muted">Max number of characters for question's title. Max allowed by database is 255.</small>
+                        <input type="number" class="form-control mt-2" id="question_max_title" name="question_max_title" placeholder="Max question's title length" value="{{ app_settings.question_max_title }}" required="required">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="question_max_description">Questions max description length <span class="form-required">*</span></label>
+                        <small class="text-muted">Max number of characters for question's description.</small>
+                        <input type="number" class="form-control mt-2" id="question_max_description" name="question_max_description" placeholder="Max question's description length" value="{{ app_settings.question_max_description }}" required="required">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="question_max_images">Questions max image number <span class="form-required">*</span></label>
+                        <small class="text-muted">Max number of images allowed per question.</small>
+                        <input type="number" class="form-control mt-2" id="question_max_images" name="question_max_images" placeholder="Max images per question" value="{{ app_settings.question_max_images }}" required="required">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="question_max_topics">Questions max topics number <span class="form-required">*</span></label>
+                        <small class="text-muted">Max number of topics allowed per question.</small>
+                        <input type="number" class="form-control mt-2" id="question_max_topics" name="question_max_topics" placeholder="Max topics per question" value="{{ app_settings.question_max_topics }}" required="required">
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="tab-pane fade" id="pills-email" role="tabpanel" aria-labelledby="pills-email-tab">
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="email_notifications">Application notifications <span class="form-required">*</span></label>
+                        <small class="text-muted"><b>If option is disabled</b> - users will not receive email notifications about new questions, answers or mentions. However, emails about sign up or password recovery will be sent.<br>
+                        <b>If option is enabled (1 email for each notification)</b> - for each new question, answer or mention will be sent one email. Per day may be sent thousands emails and if you use paid services for emails - that may cost you a lot.<br>
+                        <b>If option is enabled (1 email with more notifications)</b> - cron service will check for new notifications at each hour and will send one email. So, max numbers of emails per day for one user will be 24. If in that hour was not any activity - user will not receive any email.</small>
+                        <select class="form-control mt-2" id="email_notifications" name="email_notifications" required="required">
+                          <option value="0" {% if(app_settings.email_notifications == 0) %}selected="selected"{% endif %}>Disabled</option>
+                          <option value="1" {% if(app_settings.email_notifications == 1) %}selected="selected"{% endif %}>Enabled (1 email for each notification)</option>
+                          <option value="2" {% if(app_settings.email_notifications == 2) %}selected="selected"{% endif %}>Enabled (1 email with more notifications)</option>
+                        </select>
+                        <div class="cron_notifications mt-3" {% if(app_settings.email_notifications != 2) %}style="display: none"{% endif %}>
+                          <div class="alert alert-warning">
+                            <small><strong>CRON task:</strong> <div class="form-control-plaintext">0 * * * * curl --request GET '{{ ('/notifications/send?secret=' ~ app_settings.secret) | include_path_url }}'</div></small>
+                            <small>Is recommended to change secret key in App\Config.php file.</small>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="app_email">Application email <span class="form-required">*</span></label>
+                        <small class="text-muted">This email address will be added as "reply" address, which can be used to get replies from emails which you send to users.</small>
+                        <input type="text" class="form-control mt-2" id="app_email" name="app_email" placeholder="Application email address" value="{{ app_settings.app_email }}" required="required">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="email_option">Email function <span class="form-required">*</span></label>
+                        <small class="text-muted"> 
+                          You can choose through which function you can send email to users.<br>
+                          <b>Default PHP mail</b> is free option, but more email providers do not accept these emails to avoid spam.<br>
+                          <b>Mailgun</b> - Email API Service: <a href="https://www.mailgun.com/pricing" target="_blank">prices</a>. Up to 10,000 emails per month for free.<br>
+                          <b>PHPMailer</b> - option for sending email through SMTP protocol.
+                        </small>
+                        <select class="form-control custom-select mt-2" name="email_option" id="email_option">
+                          <option value="0" {% if(app_settings.email_option == 0) %}selected="selected"{% endif %}>Default PHP mail</option>
+                          <option value="1" {% if(app_settings.email_option == 1) %}selected="selected"{% endif %}>Mailgun</option>
+                          <option value="2" {% if(app_settings.email_option == 2) %}selected="selected"{% endif %}>PHPMailer</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mailgun" {% if(app_settings.email_option != 1) %}style="display:none"{% endif %}>
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="mailgun_api_key">Mailgun API Key <span class="form-required">*</span></label>
+                        <small class="text-muted">You can view it here: <a href="https://app.mailgun.com/app/dashboard" target="_blank">https://app.mailgun.com/app/dashboard</a>.</small>
+                        <input type="text" class="form-control mt-2" id="mailgun_api_key" name="mailgun_api_key" placeholder="Mailgun API Key" value="{{ app_settings.mailgun_api_key }}">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mailgun" {% if(app_settings.email_option != 1) %}style="display:none"{% endif %}>
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="mailgun_domain">Mailgun Domain <span class="form-required">*</span></label>
+                        <small class="text-muted">You can view it here: <a href="https://app.mailgun.com/app/dashboard" target="_blank">https://app.mailgun.com/app/dashboard</a>.</small>
+                        <input type="text" class="form-control mt-2" id="mailgun_domain" name="mailgun_domain" placeholder="Mailgun Domain" value="{{ app_settings.mailgun_domain }}">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row phpmailer" {% if(app_settings.email_option != 2) %}style="display:none"{% endif %}>
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="smtp_host">SMTP Host <span class="form-required">*</span></label>
+                        <small class="text-muted">
+                          You can use any SMTP host. Here is list of some: <a href="https://www.whoishostingthis.com/compare/smtp/" target="_blank">https://www.whoishostingthis.com/compare/smtp/</a>.<br>
+                          Here is guide how to use GMail SMTP server for free: <a href="https://www.hostinger.com/tutorials/how-to-use-free-google-smtp-server" target="_blank">https://kinsta.com/knowledgebase/free-smtp-server/</a>.<br>
+                          For example: <b>smtp.gmail.com</b>
+                        </small>
+                        <input type="text" class="form-control mt-2" id="smtp_host" name="smtp_host" placeholder="SMTP Host" value="{{ app_settings.smtp_host }}">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row phpmailer" {% if(app_settings.email_option != 2) %}style="display:none"{% endif %}>
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="smtp_username">SMTP Username <span class="form-required">*</span></label>
+                        <small class="text-muted">
+                          For example: <b>GMail account (email@gmail.com)</b>
+                        </small>
+                        <input type="text" class="form-control mt-2" id="smtp_username" name="smtp_username" placeholder="SMTP Username" value="{{ app_settings.smtp_username }}">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row phpmailer" {% if(app_settings.email_option != 2) %}style="display:none"{% endif %}>
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="smtp_password">SMTP Password <span class="form-required">*</span></label>
+                        <small class="text-muted">For example: <b>GMail password</b></small>
+                        <input type="text" class="form-control mt-2" id="smtp_password" name="smtp_password" placeholder="SMTP Password" value="{{ app_settings.smtp_password }}">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row phpmailer" {% if(app_settings.email_option != 2) %}style="display:none"{% endif %}>
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="smtp_port">SMTP Port <span class="form-required">*</span></label>
+                        <small class="text-muted">For example: <b>465</b> or <b>587</b></small>
+                        <input type="text" class="form-control mt-2" id="smtp_port" name="smtp_port" placeholder="SMTP Port" value="{{ app_settings.smtp_port }}">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row phpmailer" {% if(app_settings.email_option != 2) %}style="display:none"{% endif %}>
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="smtp_secure">SMTP Secure <span class="form-required">*</span></label>
+                        <small class="text-muted">
+                          SMTP Secure Connection Type.<br>
+                          Can be TLS or SSL depending on your mail client
+                        </small>
+                        <select class="form-control custom-select mt-2" name="smtp_secure" id="smtp_secure">
+                          <option value="tls" {% if(app_settings.smtp_secure == 'tls') %}selected="selected"{% endif %}>TLS</option>
+                          <option value="ssl" {% if(app_settings.smtp_secure == 'ssl') %}selected="selected"{% endif %}>SSL</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="tab-pane fade" id="pills-js" role="tabpanel" aria-labelledby="pills-js-tab">
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="banner_top">Horizontal Ad (Javascript / HTML code)</label>
+                        <small class="text-muted">This banner ad will be displayed in stream under all questions, on question page under question content. Recommended size 970 x 90 or similar.</small>
+                        <textarea class="form-control mt-2" id="banner_top" name="banner_top" placeholder="Top banner">{{ app_settings.banner_top }}</textarea>
+
+                        <label class="d-block custom-switch mt-2">
+                          <input type="checkbox" name="banner_top_status" id="banner_top_status" class="custom-switch-input" {% if(app_settings.banner_top_status == 1) %}checked="checked"{% endif %}>
+                          <span class="custom-switch-indicator"></span>
+                          <span class="custom-switch-description">Enable code</span>
+                        </label>
+
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="banner_left">Square Ad (Javascript / HTML code)</label>
+                        <small class="text-muted">This banner ad will be displayed in left side, under all links. Recommended size 250 x 250 or similar.</small>
+                        <textarea class="form-control mt-2" id="banner_left" name="banner_left" placeholder="Left side banner">{{ app_settings.banner_left }}</textarea>
+
+                        <label class="d-block custom-switch mt-2">
+                          <input type="checkbox" name="banner_left_status" id="banner_left_status" class="custom-switch-input" {% if(app_settings.banner_left_status == 1) %}checked="checked"{% endif %}>
+                          <span class="custom-switch-indicator"></span>
+                          <span class="custom-switch-description">Enable code</span>
+                        </label>
+
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-sm-12">
+                      <div class="form-group card p-4">
+                        <label class="form-label mb-0" for="analytics_code">Analytics or Tracking Code (Javascript code)</label>
+                        <small class="text-muted">This code will be added at the bottom of each page. Can be used for tracking.</small>
+                        <textarea class="form-control mt-2" id="analytics_code" name="analytics_code" placeholder="Analytics or Tracking code">{{ app_settings.analytics_code }}</textarea>
+
+                        <label class="d-block custom-switch mt-2">
+                          <input type="checkbox" name="analytics_code_status" id="analytics_code_status" class="custom-switch-input" {% if(app_settings.analytics_code_status == 1) %}checked="checked"{% endif %}>
+                          <span class="custom-switch-indicator"></span>
+                          <span class="custom-switch-description">Enable code</span>
+                        </label>
+
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">...</div>
+              </div>
+
+            </div>
+
+            <div class="card-footer">
+              <div class="d-flex">
+                <button type="submit" class="btn btn-primary mr-auto">Save settings</button>
+              </div>
+            </div>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+{% endblock %}

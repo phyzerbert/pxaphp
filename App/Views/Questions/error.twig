@@ -1,0 +1,38 @@
+{#
+  Question not found template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Question was not found{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="row">
+
+      	{% include('leftbar.twig') with { 'page_title': 'Question was not found', 'page_active': 'question' } %}
+
+        <div class="col-lg-9 order-lg-2 mt-4">
+
+			    <div class="card p-4 text-center">
+		        
+		       	<div class="big-icon">
+							<i class="fe fe-alert-triangle text-primary"></i>
+						</div>
+		       	
+		       	<p class="mb-1">Seems that requested question was not found...</p>
+		       	<small class="d-block mb-4">Try to use search to find question which you need.</small>
+		       	
+		       	<div class="card-footer">
+		       		<a href="/questions/all" class="btn btn-primary">View all questions</a>
+		       	</div>
+		      </div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{#
+  Success Reset password page template which is displayed when new password is set
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Forgot password{% endblock %}
+
+{% block body %}
+	
+	<div class="page-single">
+  	
+  	<div class="container">
+      <div class="row mt-8">
+        <div class="col col-login mx-auto">
+          <div class="card">
+            <div class="card-body p-6">
+              <div class="card-title">Forgot password</div>
+                
+              <div class="form-group">
+                <small>
+                  <b>Password reset successfully</b><br>
+                  You can now <a href="/signin">signin</a>.
+                </small>
+              </div>
+            
+              <div class="form-footer">
+                <a href="/signin" class="btn btn-primary btn-block" tabindex="1">Sign in</a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+	   	  
+	</div>
+    
+{% endblock %}

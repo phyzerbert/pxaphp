@@ -1,0 +1,164 @@
+{#
+  Admin Panel. All users template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Users. Admin panel{% endblock %}
+
+{% block footer %}
+
+  <script>
+
+    function banUser(id) {
+      
+      if(id > 0) {
+        $("#banUserId").val(id);
+        $('#banUserModal').modal('show');
+      }
+    }
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          {% if(search) %}
+            Users: <b>{{search}}</b> 
+          {% else %}
+            All Users
+          {% endif %}
+        </h1>
+        <div class="page-subtitle">
+          {% if(search) %}
+            {{ users_number }} results found
+          {% else %}
+            {{ paginator.offset + 1 }} - {{ users|length }} of {{ users_number }} users
+          {% endif %}
+        </div>
+        <div class="page-options d-flex">
+          <div>
+            <form method="get" action="/admin/users/index">
+              <div class="input-icon ml-2">
+                <span class="input-icon-addon">
+                  <i class="fe fe-search"></i>
+                </span>
+                <input type="text" class="form-control w-10" name="search" placeholder="Search users" value={{ search }}>
+              </div>
+            </form>
+          </div>
+          <a href="/admin/users/add" class="btn btn-primary ml-4"><i class="fe fe-plus mr-1"></i>Add new user</a>
+        </div>
+      </div>
+
+      <div class="card">
+        
+        <div class="card-header">
+          <h3 class="card-title">Users</h3>
+          <a href="/admin/users/banned" class="ml-auto btn btn-outline-danger btn-sm">View Banned</a>
+        </div>
+
+        {% if users is not empty %}
+          <div class="table-responsive">
+            <table class="table card-table table-vcenter">
+              <thead>
+                <tr>
+                  <th class="w-1">ID</th>
+                  <th class="w-1">Image</th>
+                  <th>User</th>
+                  <th class="w-1"></th>
+                </tr>
+              </thead>
+              <tbody>
+
+                {% for user in users %}
+
+                  <tr>
+
+                    <td class="text-muted">{{ user.id }}</td>
+                    <td>
+                      <div class="text-center">
+                        <a href="/user/{{ user.username }}" target="_blank"><span class="avatar avatar-xl m-1" {% if user.photo %}style="color: transparent; background-image: url(/media/images/users/{{ user.photo }})"{% endif %}>{{ user.username|slice(0, 2)|upper }}</span></a>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="/user/{{ user.username }}" target="_blank">{{ user.username|capitalize }}</a>
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <small>
+                            <p class="m-0 p-0">Questions: <b>{{ user.questions }}</b> <a href="/user/{{ user.username }}/questions" target="_blank">[View All]</a></p>
+                            <p class="m-0 p-0">Answers: <b>{{ user.answers }}</b> <a href="/user/{{ user.username }}/answers" target="_blank">[View All]</a></p>
+                            <p class="m-0 p-0">Points: <b>{{ user.points }}</b></p>
+                            <p class="m-0 p-0">Email: <b>{{ user.email }}</b></p>
+                            <p class="m-0 p-0">Name: <b>{{ user.name | default("N/A") }}</b></p>
+                          </small>
+                        </div>
+                        <div class="col-sm-6">
+                          <small>
+                            <p class="m-0 p-0">Birth date: <b>{{ user.birth_date | default("N/A") }}</b></p>
+                            <p class="m-0 p-0">Location: <b>{{ user.location | default("N/A") }}</b></p>
+                            <p class="m-0 p-0">About: <b>{{ user.about | default("N/A") }}</b></p>
+                            <p class="m-0 p-0">Signed up: <b>{{ user.signup_stamp|timeago }}</b></p>
+                            <p class="m-0 p-0">Last activity: <b>{{ user.last_visit|timeago }}</b></p>
+                          </small>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="/admin/users/edit?id={{ user.id }}" class="btn btn-outline-primary btn-sm"><i class="fe fe-edit"></i> Edit User</a>
+                      <a href="javascript:banUser({{ user.id }})" class="btn btn-outline-danger btn-sm mt-3"><i class="fe fe-lock"></i> Ban User</a>
+                    </td>
+
+                  </tr>
+                  
+                {% endfor %}
+
+              </tbody>
+            </table>
+          </div>
+
+        {% else %}
+
+          <div class="p-4">
+            {% if(search) %}
+              <p>Nothing found for <b>{{ search }}</b>.</p>
+            {% else %}
+              <p>There is not any user registered.</p>
+            {% endif %}
+          </div>
+
+        {% endif %}
+
+      </div>
+
+      {% include('pagination.twig') %}
+
+    </div>
+
+  </div>
+
+  <div class="modal fade" id="banUserModal" tabindex="-1" role="dialog" aria-labelledby="banUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <h1><i class="fe fe-lock pt-4 text-danger"></i></h1>
+          <h5 class="modal-title">Do you confirm that want to ban this user?</h5>
+          <small>After banning - user will can not sign in.</small>
+        </div>
+        <div class="modal-footer">
+          <form method="post" action="/admin/users/ban">
+            <input type="hidden" id="banUserId" name="id" value="0">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-danger">Ban</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

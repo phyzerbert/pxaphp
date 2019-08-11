@@ -1,0 +1,333 @@
+{#
+  View Question template. Include all answers for viewed question
+  Block "footer" is run after is init all js code
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}{{ question.title }}{% endblock %}
+{% block page_description %}{{ question.description|striptags }}{% endblock %}
+{% block og %}
+	<meta property="og:title" content="{{ question.title }}" />
+	<meta property="og:description" content="{{ question.description|striptags }}" />
+	<meta property="og:url" content="{{ ('/question/' ~ question.url) | include_path_url }}" />
+	{% if question.image %}
+		<meta property="og:image" content="{{ ('/media/images/questions/' ~ question.image) | include_path_url }}"/>
+	{% endif %}
+	<meta property="og:site_name" content="QxAPHP" />
+	<meta property="og:type" content="website" />
+{% endblock %}
+
+
+{% block footer %}
+
+	<script type="text/javascript" src="/media/vendor/Quill/image-resize.min.js"></script>
+	<script type="text/javascript" src="/media/vendor/Quill/video-resize.min.js"></script>
+	<script type="text/javascript" src="/media/vendor/Quill/image-upload.js"></script>
+	<script type="text/javascript" src="/media/vendor/Quill/quill.mention.min.js"></script>
+
+	<script>
+
+		{% if current_user %}
+			{% if question.is_closed == 0 %}
+				{% if this_page.one_answer == 0 %}
+
+				  $(document).ready( function() {
+
+				  	var quill = new Quill('#editor', {
+				      modules: {
+				        toolbar: [
+				          [{ header: [3, 4, 5, 6, false], }],
+				          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+				          ['bold', 'italic', 'underline', 'code-block', 'link', 'image', 'video'],
+				        ],
+				        imageResize: {
+				          displaySize: true
+				        },
+				        videoResize: {
+				        },
+				        imageUpload: {
+			            url: "/answers/upload-image",
+			            method: "POST", 
+			            headers: {},
+			            callbackOK: (serverResponse, next) => {
+			              next(serverResponse);   
+			            },
+			            callbackKO: (serverError) => {
+			              console.log(serverError);
+			            }
+			        	},
+			        	mention: {
+				          allowedChars: /^[0-9A-Z_a-z]*$/,
+				          mentionDenotationChars: ["@"],
+				          source: function (searchTerm, renderList, mentionChar) {
+				            let values = [ { id: 1, value: searchTerm }, ];
+
+				            if (searchTerm.length === 0) {
+				              renderList(values, searchTerm);
+				            } else {
+				              const matches = [];
+				              for (i = 0; i < values.length; i++)
+				                if (~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())) matches.push(values[i]);
+				              renderList(matches, searchTerm);
+				            }
+				          }
+				        },
+				      },
+				      placeholder: 'Your answer',
+				      theme: 'snow'
+				    });
+
+				    quill.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
+						  var regex = /https?:\/\/[^\s]+/g;
+						  if(typeof(node.data) !== 'string') return;
+						  var matches = node.data.match(regex);
+
+						  if(matches && matches.length > 0) {
+						    var ops = [];
+						    var str = node.data;
+						    matches.forEach(function(match) {
+						      var split = str.split(match);
+						      var beforeLink = split.shift();
+						      ops.push({ insert: beforeLink });
+						      ops.push({ insert: match, attributes: { link: match } });
+						      str = split.join(match);
+						    });
+						    ops.push({ insert: str });
+						    delta.ops = ops;
+						  }
+
+						  return delta;
+						});
+
+						var form = document.querySelector('#add_answer');
+
+			      form.onsubmit = function() {
+
+			        var answer = document.querySelector('input[name=answer]');
+			        answer.value = quill.root.innerHTML;
+			      };
+
+				  });
+
+				{% endif %}
+			{% endif %}
+		{% endif %}
+	    
+	</script>
+
+{% endblock %}
+
+{% block body %}
+
+	<style type="text/css">
+		.ql-editor iframe {
+		  pointer-events: none !important;
+		}
+	</style>
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="row">
+
+      	{% include('leftbar.twig') with {'page_title': question.title, 'page_active': 'question'} %}
+
+        <div class="col-lg-9 order-lg-2 mt-4">
+
+        	{% if settings.banner_top_status == 1 %}
+						<div class="max-width-100 row mb-4 pl-3 pr-3">
+					    {{ settings.banner_top|raw }}
+						</div>
+					{% endif %}
+
+			   	<div class="card post" id="question_{{ question.id }}">
+
+					  <div class="card-body">
+					  	<div class="tags mb-4">
+
+								<a href="#" class="tag tag-closed {% if question.is_closed != 1 %}d-none{% endif %}">Closed Question <span class="tag-addon tag-gray-dark opacity-6"> </span></a>
+
+								<a href="/questions/own" class="tag tag-own-question {% if question.user_id != current_user.id %}d-none{% endif %}">Your Own Question <span class="tag-addon tag-azure opacity-6"> </span></a>
+
+								<a href="/questions/followed" class="tag tag-followed {% if not is_following %}d-none{% endif %}">Followed Question <span class="tag-addon tag-yellow opacity-6"> </span></a>
+
+								<a href="/questions/without-answer" class="tag tag-no-answer {% if question.answers > 0 %}d-none{% endif %}">Without Answers <span class="tag-addon tag-red opacity-6"> </span></a>
+
+					    	{% for this_topic in question.topics %}
+									<a href="/topic/{{ this_topic.url }}" class="tag">{{ this_topic.title }}</a>
+					    	{% endfor %}
+					    </div>
+
+					    <h1 class="question-title mb-2">{{ question.title }}</h1>
+					    <p>{% autoescape 'html' %}{{ question.description | raw }}{% endautoescape %}</p>
+
+					    <div class="question-images mt-2 mb-2">
+					    	{% for this_image in question.images %}
+									<a href="/media/images/questions/{{ this_image.image }}" class="image-link"><img src="/media/images/questions/{{ this_image.image }}" alt="{{ question.title }}" class="img-thumbnail" /></a>
+					    	{% endfor %}
+					    </div>
+
+					    <div class="mt-4">
+					    	<small class="text-muted">{% if question.user_id == current_user.id %}You{% else %}<a href="/user/{{ question.author.username }}"><span class="avatar avatar-sm">{{ question.author.username|slice(0, 2)|upper }}</span></a> <a href="/user/{{ question.author.username }}">{{ question.author.username|capitalize }}</a>{% endif %} asked on {{ question.added_at|date('d F Y, H:i') }}</small>
+					    </div>
+
+					    <div class="mt-1">
+								<small><b>{{ total_answers }}</b> answers / <b>{{ question.views }}</b> views {% if not current_user %}/ <b>{{ question.votes }}</b> votes{% endif %}</small>
+					    </div>
+
+					  </div>
+					  <div class="card-footer">
+
+					  	{% if current_user %}
+
+								{% if question.is_closed != 0 %}
+									<a href="/question/{{ question.url }}" class="btn btn-outline-secondary btn-sm"><i class="fe fe-check"></i> Closed Question</a>
+								{% endif %}
+
+								<!-- Vote Button -->
+								<span class="btn-vote d-inline-block">
+									<div class="input-group">
+	                  <span class="input-group-prepend">
+	                    <span class="input-group-text text-primary click-vote {% if is_voted.value == 1 %}active{% endif %}" onclick="vote_question({{ question.id }});"><i class="fe fe-thumbs-up"></i></span>
+	                  </span>
+	                  <input type="text" class="form-control text-center plaintext votes-number" disabled="" value="{{ question.votes }} votes">
+	                  <span class="input-group-append">
+	                    <span class="input-group-text text-primary click-unvote {% if is_voted.value == -1 %}active{% endif %}" onclick="unvote_question({{ question.id }});"><i class="fe fe-thumbs-down"></i></span>
+	                  </span>
+	                </div>
+								</span>
+								<!-- /Vote Button -->
+
+								{% if current_user.id == question.user_id %}
+									<div class="dropdown">
+									  <button type="button" class="btn btn-outline-secondary dropdown-toggle btn-sm" data-toggle="dropdown">
+									    {% if question.is_closed == 0 %}<i class="fe fe-edit-2 can_close"></i> <i class="fe fe-more-vertical can_close"></i> <i class="fe fe-lock can_close"></i> <i class="fe fe-more-vertical can_close"></i>{% endif %} <i class="fe fe-trash-2 i-danger"></i>
+									  </button>
+									  <div class="dropdown-menu">
+									    {% if question.is_closed == 0 %}
+									    	<a class="dropdown-item can_close" href="#" onclick="edit_question({{ question.id }}); return false;"><i class="fe fe-edit-2"></i> Edit Question</a>
+									    	<a class="dropdown-item can_close" href="#" onclick="close_question({{ question.id }}); return false;"><i class="fe fe-lock"></i> Close Question</a>
+									   	{% endif %}
+									    <a class="dropdown-item" href="#" onclick="delete_question({{ question.id }}); return false;"><i class="fe fe-trash-2 i-danger"></i> Delete Question</a>
+									  </div>
+									</div>
+
+								{% else %}
+	
+									<!-- Follow Question -->
+									<button id="unfollow_{{ question.id }}" onclick="unfollow_question({{ question.id }});" class="followed-btn btn btn-outline-warning btn-sm {% if not is_following %}d-none{% endif %}">
+					          <span class="following"><span class="fe fe-star"></span> Following</span>
+					          <span class="unfollow"><span class="fe fe-slash"></span> Unfollow</span>
+					        </button>
+						    	<button id="follow_{{ question.id }}" onclick="follow_question({{ question.id }});" class="follow-btn btn btn-outline-secondary btn-sm {% if is_following %}d-none{% endif %}">
+					          <i class="fe fe-star i-gold"></i> Follow Question
+					        </button>
+					        <!-- /Follow Question -->
+
+									<div class="dropdown">
+									  <button type="button" class="btn btn-outline-secondary dropdown-toggle btn-sm" data-toggle="dropdown">
+									    <i class="fe fe-eye-off"></i> <i class="fe fe-more-vertical"></i> <i class="fe fe-alert-triangle i-danger"></i>
+									  </button>
+									  <div class="dropdown-menu">
+									    <a class="dropdown-item" href="#" onclick="hide_question({{ question.id }}); return false;"><i class="fe fe-eye-off"></i> Hide Question</a>
+									    <a class="dropdown-item" href="#" onclick="report_question({{ question.id }}); return false;"><i class="fe fe-alert-triangle i-danger"></i> Report Question</a>
+									  </div>
+									</div>
+								{% endif %}
+
+								<div class="dropdown share-links">
+									<button type="button" class="btn btn-outline-secondary dropdown-toggle btn-sm" data-toggle="dropdown">
+									  <i class="fe fe-share-2"></i> Share
+									</button>
+									<div class="dropdown-menu">
+								    <a class="dropdown-item" href="https://www.facebook.com/sharer.php?u={{ ('/question/' ~ question.url) | include_path_url }}" target="_blank" id="facebook">Facebook</a>
+								    <a class="dropdown-item" href="https://twitter.com/share?text={{ question.title }}&url={{ ('/question/' ~ question.url) | include_path_url }}" target="_blank" id="twitter">Twitter</a>
+								    <a class="dropdown-item" href="https://pinterest.com/pin/create/button/?url={{ ('/question/' ~ question.url) | include_path_url }}&description={{ question.title }}" class="pin-it-button" count-layout="horizontal" target="_blank" id="pinterest">Pinterest</a>
+								    <a class="dropdown-item" href="https://plus.google.com/share?url={{ ('/question/' ~ question.url) | include_path_url }}" target="_blank" id="googleplus">Google+</a>
+								    <a class="dropdown-item" href="https://www.linkedin.com/shareArticle?mini=true&url={{ ('/question/' ~ question.url) | include_path_url }}&title={{ question.title }}" target="_blank" id="linkedin">LinkedIn</a>
+								    <a class="dropdown-item" href="whatsapp://send?&text={{ question.title }} {{ ('/question/' ~ question.url) | include_path_url }}" data-action="share/whatsapp/share" target="_blank" id="whatsapp">WhatsApp</a>
+								  </div>
+								</div>
+
+							{% else %}
+								<a href="/signin" class="btn btn-outline-primary btn-sm mr-1">Sign In</a> <small>or</small>
+								<a href="/signup" class="btn btn-outline-primary btn-sm mr-1 ml-1">Sign Up</a> <small>to answer and follow questions.</small>
+							{% endif %}
+					  </div>
+
+					</div>
+
+					{% if current_user %}
+
+						{% if question.is_closed == 0 and this_page.one_answer == 0 %}
+						
+							{% include('Answers/add.twig') %}
+
+						{% endif %}
+
+					{% endif %}
+
+		      {% if answers is not empty %}
+
+		      	{% if this_page.one_answer == 0 %}
+
+			      	<div class="pt-4 pb-4 text-right">
+								
+								<div class="">
+									<div class="dropdown">
+									  <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+									    <i class="fe fe-chevron-down mr-1"></i> Sorting Answers: {{ this_page.order_name }}
+									  </button>
+									  <div class="dropdown-menu">
+									    <a href="#" class="dropdown-item {% if this_page.order_name == 'Newest' %}font-weight-bold{% endif %}" onclick="sort_answers_by('{{ this_page.url }}', 'newest');">Newest</a>
+									    <a href="#" class="dropdown-item {% if this_page.order_name == 'Most Voted' %}font-weight-bold{% endif %}" onclick="sort_answers_by('{{ this_page.url }}', 'voted');">Most Voted</a>
+									  </div>
+									</div>
+								</div>
+
+			      	</div>
+
+			      {% endif %}
+
+		        {% for answer in answers %}
+
+		          {% include('Answers/answer.twig') %}
+
+		        {% endfor %}
+
+		      {% else %}
+
+						<div class="card pt-4 pl-4">
+		        	<p>No answers for that question.</p>
+		        </div>
+
+		      {% endif %}
+
+		      {% if this_page.one_answer == 1 %}
+
+		      	<div class="card p-4">
+		        	<a href="/question/{{ question.url }}" class="btn btn-outline-primary">Click here to view {{ total_answers - 1 }} other answers</a>
+		        </div>
+
+		      {% endif %}
+
+		      {% include('pagination.twig') %}
+
+		      {% if current_user %}
+            
+            {% include('Questions/close.twig') %}
+            {% include('Questions/delete.twig') %}
+            {% include('Questions/hide.twig') %}
+
+            {% include('Answers/delete.twig') %}
+            {% include('Answers/edit.twig') %}
+            {% include('Answers/report.twig') %}
+
+          {% endif %}
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

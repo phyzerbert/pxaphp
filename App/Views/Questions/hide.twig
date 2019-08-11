@@ -1,0 +1,23 @@
+{#
+  Hide Question Modal template
+  Tab Size: 2 
+#}
+<div class="modal fade" id="hideQuestionModal" tabindex="-1" role="dialog" aria-labelledby="hideQuestionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+        <h1><i class="fe fe-eye-off fe-big pt-4 text-secondary"></i></h1>
+        <h5 class="modal-title">Do you confirm that want to hide that question?</h5>
+        <small>After confirming this question will not more appear in stream or search results.</small>
+      </div>
+      <div class="modal-footer">
+        <form method="post" action="/questions/hide">
+          <input type="hidden" id="hideQuestionId" name="id" value="0">
+          <input type="hidden" id="hideQuestionUrl" name="return" value="{{ this_page.url}}">
+          <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-outline-primary">Hide</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

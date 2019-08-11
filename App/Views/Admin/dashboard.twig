@@ -1,0 +1,205 @@
+{#
+  Admin Panel. Dashboard template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Dashboard. Admin panel{% endblock %}
+
+{% block footer %}
+
+  <script>
+
+    function checkLastVersion() {
+
+      $.ajax({
+        url: '/admin/dashboard/getlastversion',
+        type: 'POST',
+        success: function(response) {
+
+          var current_version = $("#current_version").html();
+
+          if(current_version != response) {
+            $("#last_version").html('<a class="text-success" href="http://xandr.co/apps/qxaphp" target="_blank">New update: <b>'+response+'</b></a>');
+          } else {
+            $("#last_version").html('You have last version');
+          }
+        }
+      });
+
+    }
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          Admin Dashboard
+        </h1>
+      </div>
+
+      <div class="row row-cards row-deck">
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="card p-3">
+            <div class="d-flex align-items-center">
+              <span class="stamp stamp-md {% if new_reports > 0%}bg-red{% endif %} mr-3">
+                <i class="fe fe-activity"></i>
+              </span>
+              <div>
+                <h4 class="m-0"><a href="/admin/reports/index">{% if new_reports > 0%}<span class="text-danger">{% endif %}{{ new_reports }} <small>New Reports</small>{% if new_reports > 0%}</span>{% endif %}</a></h4>
+                <small class="text-muted">For moderation</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="card p-3">
+            <div class="d-flex align-items-center">
+              <span class="stamp stamp-md bg-secondary mr-3">
+                <i class="fe fe-settings"></i>
+              </span>
+              <div>
+                <a href="/admin/dashboard/settings">
+                  <h4 class="m-0">App Settings</h4>
+                  <small class="text-muted">Website configuration</small>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="card p-3">
+            <div class="d-flex align-items-center">
+              <span class="stamp stamp-md bg-blue mr-3">
+                <i class="fe fe-layout"></i>
+              </span>
+              <div>
+                <a href="/admin/pages/index">
+                  <h4 class="m-0">Pages</h4>
+                  <small class="text-muted">{{ pages_number }} pages active</small>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="card p-3">
+            <div class="d-flex align-items-center">
+              <span class="stamp stamp-md bg-blue mr-3">
+                <i class="fe fe-users"></i>
+              </span>
+              <div>
+                <h4 class="m-0"><a href="/admin/users/index">{{ users_number }} <small>Users</small></a></h4>
+                <small class="text-muted">{{ users_today_number }} new users today</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="card p-3">
+            <div class="d-flex align-items-center">
+              <span class="stamp stamp-md bg-blue mr-3">
+                <i class="fe fe-help-circle"></i>
+              </span>
+              <div>
+                <h4 class="m-0"><a href="/admin/questions/index"> {{ questions_number }} <small>Questions</small></a></h4>
+                <small class="text-muted">{{ questions_today_number }} added today</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="card p-3">
+            <div class="d-flex align-items-center">
+              <span class="stamp stamp-md bg-blue mr-3">
+                <i class="fe fe-feather"></i>
+              </span>
+              <div>
+                <h4 class="m-0"><a href="/admin/answers/index">{{ answers_number }} <small>Answers</small></a></h4>
+                <small class="text-muted">{{ answers_today_number }} added today</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="card p-3">
+            <div class="d-flex align-items-center">
+              <span class="stamp stamp-md bg-blue mr-3">
+                <i class="fe fe-grid"></i>
+              </span>
+              <div>
+                <a href="/admin/topics/index">
+                  <h4 class="m-0">{{ topics_number }} <small>Topics</small></h4>
+                  {% if topics_number > 4 %}
+                    <small class="text-muted">Add &amp; Edit topics</small>
+                  {% else %}
+                    <small class="text-danger"><b>Add at least {{ 5 - topics_number }} topics!</b></small>
+                  {% endif %}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+          <div class="card p-3">
+            <div class="d-flex align-items-center">
+              <span class="stamp stamp-md bg-secondary mr-3">
+                <i class="fe fe-terminal"></i>
+              </span>
+              <div>
+                <h4 class="m-0">Version: <span id="current_version">{{ app_version }}</span></h4>
+                <small><span id="last_version"><a href="#" onclick="checkLastVersion(); return false;">Check for updates</a></span></small>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h4 class="card-title">About</h4>
+        </div>
+        <table class="table card-table">
+          <tbody>
+            <tr>
+              <td>Application name</td>
+              <td class="text-right"><strong>QxAPHP</strong></td>
+            </tr>
+            <tr>
+              <td>Server configuration</td>
+              <td class="text-right">
+                <strong>PHP: {{ php_version }}</strong>
+              </td>
+            </tr>
+            <tr>
+              <td>Support</td>
+              <td class="text-right">
+                <a href="mailto:xandrco@gmail.com?subject=QxAPHP support" class="btn btn-sm btn-primary" target="_blank">Get Support</a>
+                <br>
+                <small>Including customizations</small>
+              </td>
+            </tr>
+          
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+{% endblock %}

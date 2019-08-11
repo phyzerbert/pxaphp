@@ -1,0 +1,326 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<head lang="en">
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title>QxAPHP | Documentation</title>
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
+	<style type="text/css" media="screen">
+	@import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500,700);
+	body {
+		font-family: 'Roboto', sans-serif; 
+		font-size: 14px; 
+		background: #fafafa; 
+		color: #000; 
+	}
+	h1 { color: #666;
+		font-weight: normal;
+	}
+	h2 {
+		color: #666;
+		font-weight: normal;
+		margin-top: 0;
+	}
+	h3 {
+		color: #222;
+		font-weight: normal;
+		margin: 0 0 10px 0;
+	}
+	p {
+		margin: 0;
+		line-height: 20px;
+	}
+	table, hr, .box { margin-bottom:25px; }
+	.box p { margin-bottom:10px; }
+	a { color: #4c66a4;}
+	a:hover { color: #1e346a;}
+	.row-body {
+		border-bottom: 0;
+		margin: 0 auto;
+		width: 100%;
+		max-width: 900px;
+		overflow: auto;
+	}
+	.message-container {
+		padding: 0 20px 10px 10px;
+	}
+	.message-form-content {
+		box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0);
+		border: 1px solid rgba(0, 40, 100, 0.12);
+		background: #FFF;
+		color: #6B6B6B;
+		border-radius: 3px;
+		overflow: auto;
+	}
+	.message-inner {
+		padding: 20px;
+		overflow: auto;
+	}
+	.divider {
+		height: 1px;
+		width: 100%;
+		background: #DEE0E3;
+		float: left;
+	}
+	.logo {
+		float: left;
+		vertical-align: middle;
+		line-height: 38px;
+		font-size: 20px;
+	}
+	.doc-menu {
+		float: right;
+		margin: 10px 0;
+		text-align: right;
+	}
+	.doc-menu a {
+		font-weight: bold;
+		margin-left: 20px;
+		text-decoration: none;
+	}
+	.about {
+		text-align: right;
+		width: 100%;
+	}
+	.thank-you {
+		margin: 10px;
+		background: #4e68a5;
+		color: #fff;
+		overflow: auto;
+		float: left;
+		padding: 10px;
+	}
+	.thank-you a {
+		color: #fff;
+	}
+	.inner-inner {
+		padding: 0 10px;
+	}
+	.developers-color {
+		color: #4C72D6;
+	}
+	</style>
+</head>
+
+<body id="top">
+	<div class="row-body">
+		<div class="message-container">
+			<div class="message-form-content">
+				<div class="message-inner">
+					<a href="http://xandr.co/app/qxaphp" target="_blank"><div class="logo">QxAPHP</div></a>
+					<div class="doc-menu">
+						<a href="#requirements">Requirements</a> 
+						<a href="#installation">Installation</a> 
+						<a href="#configuration">Configuration</a> 
+						<a href="#mvc">MVC Pattern</a> 
+						<a href="#updates">Updates</a>
+					</div>
+				</div>
+				<div class="divider"></div>
+				<div class="message-inner">
+					<div class="about">Last update: 1 January 2019 | <a>version 1.0.0</a></div>
+				</div>
+				<div class="divider"></div>
+					<div class="thank-you">Thank you for purchasing QxAPHP application. If you have any questions that are beyond the scope of this documentation, please feel free to contact me on <a href="http://xandr.co/contact" target="_blank">that page</a>.</div>
+				<div class="divider"></div>
+				<div class="message-inner">
+					
+					<h3 id="requirements"><strong>1. Requirements</strong> <small><a href="#top" style="float:right">Back to top</a></small></h3>
+					To make application working you need:
+					<ol>
+						<li><strong>Server with PHP 7+</strong></li>
+						<li><strong>PDO Extension</strong></li>
+						<li><strong>Rewrite Module for Apache</strong></li>
+					</ol>
+					Also, for some functions you will need:
+					<ol>
+						<li><strong>Composer</strong> for updating 3rd party components</li>
+						<li><strong>CRON</strong> for using scheduled email notifications</li>
+						<li><strong>SMTP</strong> or <strong>Mailgun</strong> for sending emails</li>
+					</ol>
+
+				</div>
+				<div class="divider"></div>
+				<div class="message-inner">
+
+					<h3 id="installation"><strong>2. Installation Process</strong> <small><a href="#top" style="float:right">Back to top</a></small></h3>
+					<ol>
+						<li>Upload all files to your web server through FTP (Usually <strong>public_html</strong> folder).</li>
+						<li>Create new database, which will be used by application.</li>
+						<li>Import the <strong>qxaphp.sql</strong> file from the root folder into your MySQL database using the import function available in MySQL.</li>
+						<li>With any text editor open the following file located inside the 'App' folder: <strong>Config.php</strong>, and set your MySQL settings:
+							<pre>
+const DB_NAME = '';  <- Your database name (from 2nd step)
+const DB_USER = '';  <- Your database user
+const DB_PASSWORD = '';  <- Your database password
+							</pre>
+						</li>
+						<li>
+							Set the <strong>CHMOD</strong> to 777, 775 or 755 (depending on the server configuration) to the following folders: <strong>'/logs'</strong>, <strong>'/public/media/images/'</strong>.
+						</li>
+						<li>
+							If you are using Composer's version - run:
+							<pre>
+composer install
+							</pre>
+						</li>
+					</ol>
+				
+				</div>
+				<div class="divider"></div>
+				<div class="message-inner">
+					
+					<h3 id="configuration"><strong>3. Configuration</strong> <small><a href="#top" style="float:right">Back to top</a></small></h3>
+
+					<p>The default email for the Admin is "<strong>admin@admin.com</strong>", and the password is "<strong>admin</strong>" without quotes. You need to change it after signing in.</p>
+
+					<br>
+					
+					<div class="inner-inner">
+
+						<li><strong>Add Topics</strong></li>
+						<p>Application will not allow user to work with it without at least 5 topics added. Sign in using admin account and add at least 5 topics to start using the app.</p>
+						<p>You can add "disabled" topics, which will not be available for users, but will be visible only in admin panel, until be set to active.</p>
+
+						<br>
+
+						<li><strong>Update Configuration</strong></li>
+						<p>Is recommended to change values for HASH_TOKEN_KEY and SECRET_TOKEN_KEY, located in <strong>'App\Config.php'</strong> file. You can generate new one here - <a href="https://randomkeygen.com/" target="_blank">https://randomkeygen.com/</a>. Use Hash token key (256 bit key) when will generate new keys. Another settings are available in admin account, in admin dashboard.</p>
+						<p>You can access the settings in your code like this: <code>Config::DB_HOST</code>. You can add your own configuration settings in that file.</p>
+						<p>Also, you can access any website setting from database from Controller / Model (By adding <code>use App\Config.php;</code>) - <code>Config::getValues('app_name');</code> and Views - <code>{{ settings.app_name }}</code>.</p>
+						
+						<br>
+
+					</div>
+				</div>
+				<div class="divider"></div>
+				<div class="message-inner">
+				
+					<h3 id="mvc"><strong>4. MVC Pattern</strong> <small><a href="#top" style="float:right">Back to top</a></small></h3>
+					
+					<b>Routers</b>
+					<p>The Router translates URLs into controllers and actions. Routes are added in the front controller. A sample home route is included that routes to the index action in the Home controller.</p>
+					<p>Routes are added with the add method. You can add fixed URL routes, and specify the controller and action, like this:</p>
+					<pre>
+$router->add('', ['controller' => 'Home', 'action' => 'index']);
+$router->add('posts/index', ['controller' => 'Posts', 'action' => 'index']);
+					</pre>
+					<p>Or you can add route variables, like this:</p>
+					<pre>
+$router->add('{controller}/{action}');
+					</pre>
+					<p>In addition to the controller and action, you can specify any parameter you like within curly braces, and also specify a custom regular expression for that parameter:</p>
+					<pre>
+$router->add('{controller}/{id:\d+}/{action}');
+					</pre>
+					<p>You can also specify a namespace for the controller:</p>
+					<pre>
+$router->add('admin/{controller}/{action}', ['namespace' => 'Admin']);
+					</pre>
+
+					<br>
+
+					<b>Controllers</b>
+					<p>Controllers respond to user actions (clicking on a link, submitting a form etc.). Controllers are classes that extend the <code>Core\Controller</code> class.</p>
+					<p>Controllers are stored in the <code>App/Controllers</code> folder. A sample Home controller included. Controller classes need to be in the <code>App/Controllers</code> namespace. You can add subdirectories to organise your controllers, so when adding a route for these controllers you need to specify the namespace (see the routing section above).</p>
+					<p>Controller classes contain methods that are the actions. To create an action, add the Action suffix to the method name. The sample controller in <code>App/Controllers/Home.php</code> has a sample index action.</p>
+					<p>You can access route parameters (for example the id parameter shown in the route examples above) in actions via the <code>$this->route_params</code> property.</p>
+
+					<br>
+
+					<b>Action filters</b>
+					<p>Controllers can have before and after filter methods. These are methods that are called before and after every action method call in a controller. Useful for authentication for example, making sure that a user is logged in before letting them execute an action. Optionally add a before filter to a controller like this:</p>
+					<pre>
+/**
+ * Before filter. Return false to stop the action from executing.
+ *
+ * @return void
+ */
+protected function before()
+{
+}
+					</pre>		
+					<p>To stop the originally called action from executing, return false from the before filter method. An after filter is added like this:</p>
+					<pre>
+/**
+ * After filter.
+ *
+ * @return void
+ */
+protected function after()
+{
+}
+					</pre>	
+
+					<br>
+
+					<b>Views</b>
+					<p>Views are used to display information (normally HTML). View files go in the <code>App/Views</code> folder. Views can be in one of two formats: standard PHP, but with just enough PHP to show the data. No database access or anything like that should occur in a view file. You can render a standard PHP view in a controller, optionally passing in variables, like this:</p>	
+					<pre>
+View::render('Home/index.php', [
+    'name'    => 'QxAPHP',
+    'links'   => ['home', 'stream', 'users']
+]);
+					</pre>
+					<p>The second format uses the <a href="http://twig.sensiolabs.org/" target="_blank">Twig templating engine</a>. Using Twig allows you to have simpler, safer templates that can take advantage of things like <a href="http://twig.sensiolabs.org/doc/templates.html#template-inheritance" target="_blank">template inheritance</a>. You can render a Twig template like this:</p>
+					<pre>
+View::renderTemplate('Home/index.html', [
+    'name'    => 'QxAPHP',
+    'links'   => ['home', 'stream', 'users']
+]);
+					</pre>
+
+					<br>
+
+					<b>Models</b>
+					<p>Models are used to get and store data in your application. They know nothing about how this data is to be presented in the views. Models extend the <code>Core\Model</code> class and use <a href="http://php.net/manual/en/book.pdo.php" target="_blank">PDO</a> to access the database. They're stored in the <code>App/Models</code> folder. A sample user model class is included in <code>App/Models/User.php</code>. You can get the PDO database connection instance like this:</p>
+					<pre>
+$db = static::getDB();
+					</pre>
+
+					<br>
+
+					<b>Errors</b>
+					<p>If the <code>SHOW_ERRORS</code> configuration setting is set to <code>true</code>, full error detail will be shown in the browser if an error or exception occurs. If it's set to false, a generic message will be shown using the <code>App/Views/404.html</code> or <code>App/Views/500.html</code> views, depending on the error.</p>
+				</div>
+				<div class="divider"></div>
+				<div class="message-inner">
+				
+					<h3 id="updates"><strong>5. Updates</strong> <small><a href="#top" style="float:right">Back to top</a></small></h3>
+					<p>Each update replace some old files. If you made changes in code and want to update it - you can ask permission to private GitHub repository with all changes. You can ask access <a href="http://xandr.co/contact" target="_blank">here</a>.</p>
+
+				</div>
+				<div class="divider"></div>
+				<div class="message-inner">
+
+					<h3 id="3rd"><strong>6. 3rd party Components</strong> <small><a href="#top" style="float:right">Back to top</a></small></h3>
+					<p>Application uses and include 3rd party components. Here is list:</p>
+					<ul>
+						<li><strong>MVC platform</strong> - based on <a href="https://github.com/daveh/php-mvc" target="_blank">Daveh.io MVC</a>. If you want to understand how it works, is recommended to watch this course: <a href="https://www.udemy.com/php-mvc-from-scratch/" target="_blank">https://www.udemy.com/php-mvc-from-scratch/</a>.</li>
+						<li><strong>Twig</strong> - template engine. <a href="https://twig.symfony.com/" target="_blank">https://twig.symfony.com/</a>.</li>
+						<li><strong>Php Mailer</strong> - email sending library. <a href="https://github.com/PHPMailer/PHPMailer" target="_blank">https://github.com/PHPMailer/PHPMailer</a>.</li>
+						<li><strong>Mailgun</strong> - email sending library (API). <a href="https://www.mailgun.com/" target="_blank">https://www.mailgun.com/</a>.</li>
+						<li><strong>Bootstrap 4</strong> - HTML, CSS, and JavaScript framework. <a href="https://getbootstrap.com/" target="_blank">https://getbootstrap.com/</a>.</li>
+						<li><strong>Tabler</strong> - open-source HTML Dashboard UI Kit. <a href="https://github.com/tabler/tabler" target="_blank">https://github.com/tabler/tabler</a>.</li>
+						<li><strong>jQuery</strong> - JavaScript library. <a href="https://jquery.com/" target="_blank">https://jquery.com/</a>.</li>
+						<li><strong>Magnific-Popup</strong> - JavaScript library for responsive lightbox. <a href="http://dimsemenov.com/plugins/magnific-popup/" target="_blank">http://dimsemenov.com/plugins/magnific-popup/</a>.</li>
+						<li><strong>Quill</strong> - open source WYSIWYG editor. <a href="https://quilljs.com/" target="_blank">https://quilljs.com/</a>.</li>
+						<li><strong>Selectize</strong> - jQuery-based custom UI control for select lists. <a href="https://selectize.github.io/selectize.js/" target="_blank">https://selectize.github.io/selectize.js/</a>.</li>
+					</ul>
+
+					<p>To update Twig, PHPMailer or Mailgun you can use:</p>
+					<pre>
+composer update
+					</pre>
+					<p>The rest can be updated manually in <code>public\media\vendors</code> folder.</p>
+					
+				</div>
+				<div class="divider"></div>
+				<div class="message-inner">
+					
+					Copyright &copy; <script>document.write(new Date().getFullYear())</script> <a href="http://xandr.co/app/qxaphp" target="_blank">QxAPHP</a>. All rights reserved.
+
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

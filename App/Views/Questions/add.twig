@@ -1,0 +1,303 @@
+{#
+  Add New Question Modal template
+  Block "footer" is run after is init all js code
+  Tab Size: 2 
+#}
+{% block footer %}
+
+  <script type="text/javascript" src="/media/vendor/Selectize/selectize.min.js?v=0.12.6"></script>
+
+  <script>
+
+    var modalName = "#addQuestionModal";
+
+    $(document).ready(function() {
+
+      $(modalName+" .custom-file-input").change(function(){
+        $(modalName+" .images-uploaded").html('');
+        getImage(this, modalName+" .images-uploaded", {{ settings.question_max_images }});
+      });
+
+      $(modalName).on('show.bs.modal', function (e) {
+
+        $('body').bind('dragover', function() {
+          $(modalName+" #q_description").blur();
+          $(modalName+" .custom-file-drag").addClass('dragging');
+        });
+
+        $('body').bind('dragleave', function() {
+          $(modalName+" .custom-file-drag").removeClass('dragging');
+        });
+
+        $('body').bind('drop', function() {
+          $(modalName+" .custom-file-drag").removeClass('dragging');
+        });
+
+        if ($(modalName+' #q_topics').has('option').length == 0) {
+
+          var sel = $(modalName+' #q_topics');
+          
+          $.getJSON('/topics/get', {}, function(data) {
+
+            $.each(data, function(index, element) {
+              $('<option>').text(element.title).val(element.id).appendTo(sel);
+            });
+
+            $(modalName+' .selectize').selectize({
+              plugins: ['remove_button'],
+              create: false,
+              sortField: {
+                field: 'text',
+                direction: 'asc'
+              },
+              dropdownParent: 'body',
+              maxItems: {{ settings.question_max_topics }},
+              onChange: function() {
+                checkSelectedTopicsNumber();
+              },
+              onItemAdd: function() {
+                this.close();
+              },
+            });
+
+          });
+        }
+
+        $(modalName+' #q_title').keyup(function() {
+
+          var currVal = $(this).val();
+          var newVal = currVal.charAt(0).toUpperCase() + currVal.slice(1, {{ settings.question_max_title }});
+          $(this).val(newVal);
+          $(modalName+" #q_title_counter").html(newVal.length);
+  
+          checkTopicsTitleLength();
+
+        }).keyup();
+
+        $(modalName+' #q_description').keyup(function() {
+
+          var currVal = $(this).val();
+          var newVal = currVal.charAt(0).toUpperCase() + currVal.slice(1, {{ settings.question_max_description }});
+          $(this).val(newVal);
+          $(modalName+" #q_description_counter").html(newVal.length);
+  
+        }).keyup();
+      });
+    });
+
+    function checkTopicsTitleLength() {
+
+      if ($(modalName+' #q_title').val().length < 3) {
+        $(modalName+' .step-2-btn, '+modalName+' .step-3-btn').addClass('disabled');
+        $(modalName+' .step-sbmt').attr("disabled", true);
+      } else {
+        $(modalName+' .step-2-btn, '+modalName+' .step-3-btn').removeClass('disabled');
+        $(modalName+' .step-sbmt').attr("disabled", false);
+      }
+    }
+
+    function checkSelectedTopicsNumber() {
+
+      var choosed = $(modalName+' .selectize')[0].selectize.items.length;
+      if (choosed > 0) {
+        $(modalName+' .step-sbmt').attr("disabled", false);
+      } else {
+        $(modalName+' .step-sbmt').attr("disabled", true);
+      }
+    }
+
+    function setStep(step) {
+
+      $(modalName+" #modal_step").val(step);
+
+      checkTopicsTitleLength();
+
+      if (step == 1) {
+
+        $(modalName+" .step-2, "+modalName+" .step-3, "+modalName+" .step-back, "+modalName+" .step-ask").addClass("d-none");
+        $(modalName+" .step-1, "+modalName+" .step-close, "+modalName+" .step-next").removeClass("d-none");
+
+        $(modalName+" .step-2-btn, "+modalName+" .step-3-btn").removeClass("active");
+        $(modalName+" .step-1-btn").addClass("active");
+
+      } else if (step == 2) {
+
+        $(modalName+" .step-1, "+modalName+" .step-3, "+modalName+" .step-close, "+modalName+" .step-ask").addClass("d-none");
+        $(modalName+" .step-2, "+modalName+" .step-back, "+modalName+" .step-next").removeClass("d-none");
+
+        $(modalName+" .step-1-btn, "+modalName+" .step-3-btn").removeClass("active");
+        $(modalName+" .step-2-btn").addClass("active");
+
+        $(modalName+" #q_description").focus();
+
+      } else if (step == 3) {
+
+        $(modalName+" .step-1, "+modalName+" .step-2, "+modalName+" .step-close, "+modalName+" .step-next").addClass("d-none");
+        $(modalName+" .step-3, "+modalName+" .step-back, "+modalName+" .step-ask").removeClass("d-none");
+
+        $(modalName+" .step-1-btn, "+modalName+" .step-2-btn").removeClass("active");
+        $(modalName+" .step-3-btn").addClass("active");
+
+        checkSelectedTopicsNumber();
+
+      }
+    }
+
+    function nextAQM() {
+
+      var step = $(modalName+" #modal_step").val();
+      var nextStep = parseInt(step) + 1;
+
+      if (step < 3) {
+
+        setStep(nextStep);
+
+      } else if (step == 3) {
+
+        $("#addQuestionForm").submit();
+      }
+    }
+
+    function backAQM() {
+
+      var step = $(modalName+" #modal_step").val();
+      var prevStep =  parseInt(step) - 1;
+
+      if (step > 1) {
+
+        setStep(prevStep);
+
+      } else {
+
+        $(modalName).modal('hide');
+      }
+    }
+
+  </script>
+
+{% endblock %}
+
+<style type="text/css">
+  .selectize-dropdown { z-index: 9999; }
+</style>
+
+<div class="modal fade" id="addQuestionModal" role="dialog" aria-labelledby="addQuestionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addQuestionModalLabel"> Ask new question <i class="fe fe-plus-circle text-primary"></i></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      {% if current_user.points < settings.question_price %}
+
+        <div class="modal-body">
+
+          <div class="alert alert-icon alert-secondary" role="alert">
+            <i class="fe fe-alert-triangle mr-2" aria-hidden="true"></i> 
+            <small>Adding new question costs <b>{{ settings.question_price }}</b> point{% if settings.question_price > 1 %}s{% endif %}.</small>
+            <br>
+            <small>For moment you have <b>{{ current_user.points }}</b> point{% if current_user.points > 1 %}s{% endif %}.</small>
+            <br>
+            <small>You can earn points by answering to another questions.</small>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-primary" data-dismiss="modal" aria-label="Close">Ok</button>
+        </div>
+
+      {% else %}
+
+        <form method="post" action="/questions/ask" id="addQuestionForm" enctype="multipart/form-data">
+
+          <div class="modal-body">
+
+            <input type="hidden" id="modal_step" value="1">
+
+            {% if settings.question_price > 0 %}
+              <div class="alert alert-icon alert-secondary" role="alert">
+                <button type="button" class="close" data-dismiss="alert"></button>
+                <i class="fe fe-alert-circle mr-2" aria-hidden="true"></i> <small>Adding new question costs <b>{{ settings.question_price }}</b> point{% if settings.question_price > 1 %}s{% endif %}.</small>
+              </div>
+            {% endif %}
+            
+            <div class="row step-1">
+              <div class="col-sm-12">
+              
+                <div class="form-group p-2">
+                  <label class="form-label mb-0" for="title">Step 1/3. Question title <span class="form-required">*</span> <pre class="p-1 form-label-small"><small><span id="q_title_counter">0</span>/{{ settings.question_max_title }}</pre></small></label>
+                  <small class="text-muted">
+                    Formulate the question in the way, in which it will be clear for others. <br> Add more information in description instead creating long titles. <br> With long questions you risk losing your reader's attention.
+                  </small>
+                  <input type="text" class="form-control mt-2" id="q_title" name="title" placeholder="Question title" required="required" autofocus="autofocus" maxlength="{{ settings.question_max_title }}">
+                </div>
+              </div>
+            </div>
+
+            <div class="row step-2 d-none">
+              <div class="col-sm-12">
+                <div class="form-group p-2">
+                  <label class="form-label mb-0" for="description">Step 2/3. Question description and attachments <pre class="p-1 form-label-small"><small><span id="q_description_counter">0</span>/{{ settings.question_max_description }}</small></pre></label>
+                  <small class="text-muted">
+                    Try to add more details to get accurate answers. <br> Do not forget that in stream are displayed only first 120 words of description. <br>You can mention someone by addig @ and his username, example: <b>@{{ current_user.username }}</b>
+                  </small>
+                  <textarea class="form-control mt-2" id="q_description" name="description" placeholder="Question description" required="required" maxlength="{{ settings.question_max_description }}"></textarea>
+                </div>
+
+                <div class="form-group p-2">
+                  <label class="form-label" for="images">Add up to <b>{{ settings.question_max_images }}</b> images</label>
+                  <small class="text-muted d-block mb-2">
+                    Will be displayed only first {{ settings.question_max_images }} images<br>
+                    Allowed JPG / PNG / GIF. Max size: 10 MB for each.
+                  </small>
+                  <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="images" name="images[]" accept="image/*" required="required" multiple="multiple">
+                    <div class="custom-file-drag">
+                      <h1><i class="fe fe-image"></i><sup style="top: -0.8em;"><i class="fe fe-move" style="font-size: 14px"></i></sup></h1>
+                      Choose or drag images here. Up to {{ settings.question_max_images }} images.
+                      <div class="images-uploaded"></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="row step-3 d-none">
+              <div class="col-sm-12">
+                <div class="form-group p-2">
+                  <label class="form-label mb-0" for="topics">Step 3/3. Question topics <span class="form-required">*</span></label>
+                  <small class="text-muted">
+                    Add from <b>1</b> to <b>{{ settings.question_max_topics }}</b> topics for that question. Question will be displayed only in these topics.
+                  </small>
+                  <div class="form-group mt-4">
+                    <select id="q_topics" class="selectize" name="topics[]" multiple placeholder="Select topics...">
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="modal-footer">
+            <div class="modal-steps mr-auto">
+              <a hreg="#" onclick="setStep(1);" class="btn btn-sm btn-light step-1-btn active">1</a>
+              <a hreg="#" onclick="setStep(2);" class="btn btn-sm btn-light step-2-btn disabled">2</a>
+              <a hreg="#" onclick="setStep(3);" class="btn btn-sm btn-light step-3-btn disabled">3</a>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="backAQM();">
+              <span class="step-close">Close</span>
+              <span class="step-back d-none">Back</span>
+            </button>
+            <button type="button" class="btn btn-primary step-sbmt" onclick="nextAQM();" disabled="disabled">
+              <span class="step-next step-2-sbmt">Next Step</span>
+              <span class="step-ask d-none">Ask Question</span>
+            </button>
+          </div>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</div>

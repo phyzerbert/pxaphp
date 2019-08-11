@@ -1,0 +1,188 @@
+{#
+  Admin Panel. Add New User template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Add new user. Admin panel{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          Add new user
+        </h1>
+        <div class="page-options d-flex">
+          <a href="/admin/users/index" class="btn btn-outline-primary ml-4"><i class="fe fe-arrow-left mr-1"></i>Back to all users</a>
+        </div>
+      </div>
+
+      <div class="row col-sm-12">
+        <div class="card">
+          <form method="post" action="/admin/users/new" id="addUserForm">
+            <div class="card-header">
+              <h4 class="card-title">User</h4>
+            </div>
+            <div class="card-body">
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="username">Username <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Enter user's username
+                    </small>
+                    <input type="text" class="form-control mt-2" id="username" name="username" placeholder="User's username" required="required" value="{{ values.username }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="password">Password <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Enter user's password (Include letters, numbers, at least 6 symbols)
+                    </small>
+                    <input type="text" class="form-control mt-2" id="password" name="password" placeholder="User's password" required="required" value="{{ values.password }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="email">Email address <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Enter user's email
+                    </small>
+                    <input type="email" class="form-control mt-2" id="email" name="email" placeholder="User's email" required="required" value="{{ values.email }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="name">Name</label>
+                    <small class="text-muted">
+                      Enter user's full name
+                    </small>
+                    <input type="text" class="form-control mt-2" id="name" name="name" placeholder="User's name" value="{{ values.name }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="is_active">Is activated <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Is account email confirmed?
+                    </small>
+                    <select class="form-control mt-2" id="is_active" name="is_active" required="required">
+                      <option value="0" selected="selected">Non-Activated</option>
+                      <option value="1">Activated</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="birth_date">Birth date</label>
+                    <small class="text-muted">
+                      Enter user's birth date
+                    </small>
+                    <input type="date" class="form-control mt-2" id="birth_date" name="birth_date" placeholder="User's birth_date" min='1899-01-01' max='{{ "now"|date("Y-m-d") }}' value="{{ values.birth_date }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="location">Location</label>
+                    <small class="text-muted">
+                      Enter user's location
+                    </small>
+                    <input type="text" class="form-control mt-2" id="location" name="location" placeholder="User's location" value="{{ values.location }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="about">About user</label>
+                    <small class="text-muted">
+                      Enter user's description (Available for all)
+                    </small>
+                    <input type="text" class="form-control mt-2" id="about" name="about" placeholder="User's about description" value="{{ values.about }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="points">Points <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Start number of points
+                    </small>
+                    <input type="number" class="form-control mt-2" id="points" name="points" placeholder="10" value="10" required="required" value="{{ values.points }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="email_notifications">Email notifications <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Option if email notifications are enabled or disabled
+                    </small>
+                    <select class="form-control mt-2" id="email_notifications" name="email_notifications" required="required">
+                      <option value="0">Disabled</option>
+                      <option value="1" selected="selected">Enabled</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="is_admin">Is admin account? <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Option if this account has access to admin panel
+                    </small>
+                    <select class="form-control mt-2" id="is_admin" name="is_admin" required="required">
+                      <option value="0" selected="selected">Is not admin</option>
+                      <option value="1">Is admin</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+           <div class="card-footer">
+              <div class="d-flex">
+                <div class="mr-auto">
+                  <button type="submit" class="btn btn-primary">Add new user</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+{% endblock %}

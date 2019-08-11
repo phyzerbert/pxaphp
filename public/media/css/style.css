@@ -1,0 +1,503 @@
+/* General style */
+body {
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
+  font-size: 1em;
+  background-color: #fafafa;
+  padding-top: 60px;
+}
+
+.card-footer .btn {
+  margin-bottom: 5px;
+  margin-right: 5px;
+}
+
+.text-hover-underline:hover {
+  text-decoration: underline;
+}
+
+.max-width-100 img {
+  max-width: 100%
+}
+
+.max-width-100 iframe {
+  max-width: 100%
+}
+
+.btn .badge {
+  font-size: 85%;
+}
+
+/* Fix for sticky-top and fixed navbar */
+.sticky-offset {
+  top: 110px;
+}
+
+/* Custom padding for sign up and sign in buttons in navbar */
+.nav-item .btn-sm {
+  padding: 0.5rem 1rem;
+}
+
+/* Removing underline for links */
+a, a:hover {
+  text-decoration: none;
+}
+
+/* Search bar in header */
+#search {
+  background-color: #fafafa;
+  padding: 0.275rem 0.75rem;
+}
+
+/* Post style */
+.post h1, .post .h1 {
+  font-size: 1.2rem;
+}
+
+/* Colors for posts icons in buttons */
+.i-gold {
+  color: #ad9514;
+  opacity: 0.7;
+}
+
+.i-danger {
+  color: #902828;
+  opacity: 0.7;
+}
+
+.follow-btn:hover .i-gold {
+  color: #fff;
+}
+
+/* Description for left menu under each category */
+.menu-description {
+  font-size: 0.75em;
+}
+
+/* Hover effect for left menu links */
+.list-group-item:hover {
+  background: rgba(70, 127, 207, 0.04);
+}
+
+/* Box shadow for fixed header */
+.header {
+  box-shadow: 0 3px 2px -2px rgba(200,200,200,0.2);
+}
+
+/* Make login larger in width */
+.col-login {
+  max-width: 30rem;
+}
+
+/* Validation classes */
+label.error {
+  display: inline-block;
+  color: #6b1110;
+  background-color: #f5d2d2;
+  border-color: #f1c1c0;
+  padding: 6px 10px;
+  font-size: 12px;
+  margin-top: 5px;
+  width: 100%;
+}
+
+/* Show and hide password input value */
+.toogle-password {
+  cursor: pointer;
+  pointer-events: all;
+  height: 38px;
+}
+
+.no-border-radius {
+  border-radius: 0;
+}
+
+/* Select topic page */
+.select_topic .topic img {
+  width: 100px;
+  height: 100px;
+}
+
+.select_topic .imagecheck-image {
+  opacity: .8;
+} 
+
+.select_topic .imagecheck:hover .imagecheck-image {
+  opacity: 1;
+}
+ 
+.select_topic .imagecheck-input:checked ~ .imagecheck-figure .imagecheck-image {
+  opacity: .4;
+}
+
+.select_topic .topic .description {
+  max-width: 100px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.select_topic .imagecheck-figure:before {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  margin-left: -25px;
+  margin-top: -25px;
+}
+
+.select_topic .imagecheck:hover .description, 
+.select_topic .imagecheck-input:checked ~ .description {
+  color: #3866a6;
+}
+
+/* Image previews on add / edit question page */
+.image-preview {
+  display: inline-block;
+  margin: 10px;
+  max-width: 80px;
+  max-height: 80px;
+}
+
+.custom-file {
+  height: 100%;
+  cursor: pointer;
+}
+
+.dragging {
+  border-color: #467fcf !important;
+  background-color: rgba(70, 127, 207, 0.06) !important;
+}
+
+.custom-file input {
+  position: absolute;
+  height: 100%;
+  cursor: pointer;
+}
+
+.custom-file-input:hover {
+  border-color: #467fcf !important;
+}
+
+.custom-file-drag {
+  display: block;
+  background-color: #fbfbfc;
+  margin-top: 5px;
+  padding: 30px 10px;
+  border: solid 1px #e0e5ec;
+  border-radius: 3px;
+  text-align: center;
+  font-size: 14px;
+  color: gray;
+}
+
+/* Topics list page */
+.topics_list .topic img {
+  width: 50px;
+  height: 50px;
+}
+
+.followed-btn .unfollow {
+  display: none;
+}
+
+.followed-btn:hover .following {
+  display: none;
+}
+
+.followed-btn:hover .unfollow {
+  display: inline-block;
+}
+
+/* Question template */
+.question-images img {
+  max-width: 200px;
+  max-height: 200px;
+}
+
+.post:hover {
+  opacity: 1 !important;
+}
+
+/* Big icon */
+.big-icon {
+  margin-top: 50px;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.big-icon i {
+  font-size: 6rem;
+  opacity: .8;
+}
+
+.fe-big {
+  font-size: 50px;
+  opacity: .7;
+}
+
+/* Question page */
+.question-title {
+  font-size: 1.5rem !important;
+}
+
+.opacity-6 {
+  opacity: .6;
+}
+
+.tag:hover .opacity-6 {
+  opacity: 1;
+}
+
+.btn-vote {
+  width: 150px;
+  margin-right: 5px;
+}
+
+.btn-vote input,
+.btn-vote .input-group-text {
+  border-color: #868e96;
+}
+
+.btn-vote input {
+  padding: 0;
+  font-size: 13px;
+}
+
+.btn-vote .input-group-text {
+  cursor: pointer;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.btn-vote .input-group-text:hover,
+.btn-vote .input-group-text.active {
+  background-color: #437dd2;
+  color: #fff !important;
+}
+
+/* Quill Editor */
+.ql-editor {
+  min-height: 60px;
+}
+
+.ql-tooltip {
+  left: auto !important;
+  right: 0 !important;
+  top: -50px !important;
+}
+
+/* Answer Content */
+.answer_content img,
+.answer_content iframe {
+  max-width: 100%;
+  max-height: 600px;
+}
+
+/* Share buttons */
+.share-links #facebook {
+  color: #3b5998;
+}
+ 
+.share-links #facebook:hover {
+  color: #133783;
+}
+ 
+.share-links #twitter {
+  color: #1da1f2;
+}
+ 
+.share-links #twitter:hover {
+  color: #2582bb;
+}
+ 
+.share-links #pinterest {
+  color: #bd081c;
+}
+ 
+.share-links #pinterest:hover {
+  color: #880e1c;
+}
+ 
+.share-links #googleplus {
+  color: #db4437;
+}
+ 
+.share-links #googleplus:hover {
+  color: #cf1808;
+}
+ 
+.share-links #linkedin {
+  color: #0077b5;
+}
+ 
+.share-links #linkedin:hover {
+  color: #02689d;
+}
+ 
+.share-links #whatsapp {
+  color: #00E676;
+}
+ 
+.share-links #whatsapp:hover {
+  color: #03c164;
+}
+
+/* Users list page */
+.users_list .user img {
+  width: 50px;
+  height: 50px;
+}
+
+.users_list .user-name {
+  font-size: 80%;
+}
+
+/* Notifications changes */
+.dropdown-menu.notify-drop {
+  min-width: 330px;
+  background-color: #fff;
+  min-height: 375px;
+  max-height: 375px;
+}
+
+.dropdown-menu.notify-drop .notify-drop-title {
+  border-bottom: 1px solid #e2e2e2;
+  padding: 5px 15px 10px 15px;
+}
+
+.dropdown-menu.notify-drop .drop-content {
+  min-height: 280px;
+  max-height: 280px;
+  overflow-y: scroll;
+}
+
+.dropdown-menu.notify-drop .drop-content::-webkit-scrollbar-track {
+  background-color: #F5F5F5;
+}
+
+
+.dropdown-menu.notify-drop .drop-content::-webkit-scrollbar {
+  width: 8px;
+  background-color: #F5F5F5;
+}
+
+
+.dropdown-menu.notify-drop .drop-content::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+}
+
+.dropdown-menu.notify-drop .drop-content > li {
+  border-bottom: 1px solid #e2e2e2;
+  padding: 10px 0px 5px 0px;
+}
+
+.dropdown-menu.notify-drop .drop-content > li:nth-child(2n+0) {
+  background-color: #fafafa;
+}
+
+.dropdown-menu.notify-drop .drop-content > li:after {
+  content: "";
+  clear: both;
+  display: block;
+}
+
+.dropdown-menu.notify-drop .drop-content > li:hover {
+  background-color: #fcfcfc;
+}
+
+.dropdown-menu.notify-drop .drop-content > li:last-child {
+  border-bottom: none;
+}
+
+.dropdown-menu.notify-drop .rIcon:hover {
+  color: #333;
+}
+
+.dropdown-menu.notify-drop .drop-content > li a {
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.dropdown-menu.notify-drop .drop-content > li {
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.dropdown-menu.notify-drop .drop-content > li p {
+  font-size: 11px;
+  color: #666;
+  font-weight: normal;
+  margin: 3px 0;
+}
+
+.dropdown-menu.notify-drop .drop-content > li p.time {
+  font-size: 10px;
+  font-weight: 600;
+  top: -6px;
+  margin: 8px 0px 0px 0px;
+  padding: 0px 3px;
+  border: 1px solid #e2e2e2;
+  position: relative;
+  background-image: linear-gradient(#fff,#f2f2f2);
+  display: inline-block;
+  border-radius: 2px;
+}
+
+.dropdown-menu.notify-drop .drop-content > li p.time:hover {
+  background-image: linear-gradient(#fff,#fff);
+}
+
+.dropdown-menu.notify-drop .notify-drop-footer {
+  border-top: 1px solid #e2e2e2;
+  bottom: 0;
+  position: relative;
+  padding: 8px 15px;
+}
+
+.dropdown-menu.notify-drop .notify-drop-footer a {
+  color: #777;
+  text-decoration: none;
+}
+
+.dropdown-menu.notify-drop .notify-drop-footer a:hover {
+  color: #333;
+}
+
+.notifications-with-borders li {
+  border-bottom: solid 1px #e1e1e1;
+}
+
+.notifications-with-borders .time {
+  font-size: 13px;
+}
+
+/* Custom active links for custom pages (leftbar nav) */
+.custom-pages a {
+  padding: 3px 8px;
+}
+.custom-pages .active-link {
+  background: rgba(70, 127, 207, 0.05);
+  color: #467fcf;
+}
+
+/* Custom collapse navbar */
+@media (max-width: 768px) {
+  .navbar-collapse {
+      position: absolute;
+      top: 54px;
+      left: 1%;
+      padding-left: 15px;
+      padding-right: 15px;
+      padding-bottom: 15px;
+      width: 100%;
+      transition: all 0.3s ease-in;
+  }
+  .navbar-collapse.collapsing {
+      height: auto !important;
+      transition: all 0.2s ease;
+      left: 100%;
+  }
+  .navbar-collapse.show {
+      left: 0;
+  }
+}

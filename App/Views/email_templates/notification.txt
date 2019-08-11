@@ -1,0 +1,7 @@
+Hello,
+
+You received new notification on {{ settings.app_name }}:
+
+{{ notification }}
+
+Open this link to view all notifications: {{ url }}

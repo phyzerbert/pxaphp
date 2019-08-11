@@ -1,0 +1,267 @@
+{#
+  Profile template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Settings{% endblock %}
+{% block footer %}
+
+  <script>
+
+    function create_new_password() {
+      $('.btn-new-password').remove();
+      $('#change_password').removeClass("d-none");
+    }
+
+    $(document).ready( function() {
+
+      function getImage(input) {
+        
+        if (input.files && input.files[0]) {
+
+          var reader = new FileReader();
+              
+          reader.onload = function (e) {
+            $('#img-upload').attr('src', e.target.result);
+            $('.custom-file-label').html(input.files[0].name);
+          }
+          
+          reader.readAsDataURL(input.files[0]);
+        }
+      }
+
+      $(".custom-file-input").change(function(){
+        getImage(this);
+      });
+
+    });
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="row">
+
+      	<div class="col-lg-3 order-lg-1 mb-4">
+          <div class="sticky-top sticky-offset">
+
+            <div class="card p-4">
+              <div class="text-center">
+                {% if user.photo %}<a href="/media/images/users/{{ user.photo }}" class="image-link">{% endif %}<span class="avatar avatar-xxl" {% if user.photo %}style="color: transparent; background-image: url(/media/images/users/{{ user.photo }})"{% endif %}>{{ user.username|slice(0, 2)|upper }}</span>{% if user.photo %}</a>{% endif %}
+                <a href="/user/{{ user.username }}"><h5 class="mt-4 mb-2">@{{ user.username|capitalize }}</h5></a>
+                <span class="d-block alert alert-secondary p-1">
+                  <b>{{ user.points }}</b>
+                  <small class="d-block" style="font-size: 80%">points</small>
+                </span>
+              </div>
+
+              <div class="pb-2 border-bottom">
+                {% if user.name %}
+                  <p class="mt-0 mb-0">{{ user.name }}</p>
+                {% endif %}
+                {% if user.about %}
+                  <p class="mt-0 mb-0"><small class="text-muted">{{ user.about }}</small></p>
+                {% endif %}
+              </div>
+
+              <div class="pt-2">
+                {% if user.location %}
+                  <p class="mt-0 mb-0"><small><i class="fe fe-map-pin text-muted mr-1"></i> From {{ user.location }}</small></p>
+                {% endif %}
+                {% if user.last_visit %}
+                  <p class="mt-0 mb-0"><small><i class="fe fe-activity text-muted mr-1"></i> Last activity {{ user.last_visit|timeago }}</small></p>
+                {% endif %}
+                {% if user.signup_stamp %}
+                  <p class="mt-0 mb-0"><small><i class="fe fe-target text-muted mr-1"></i> Signed up {{ user.signup_stamp|timeago }}</small></p>
+                {% endif %}
+              </div>
+
+              {% if current_user.id == user.id %}
+                <div class="pt-4">
+                  <a href="/user/settings" class="btn btn-light btn-block"><i class="fe fe-edit-2"></i> Edit Profile</a>
+                </div>
+              {% endif %}
+            </div>
+
+           
+
+            <div class="d-none d-lg-block mt-4">
+              <small>
+                {% if current_user.is_admin == 1 %}
+                  <a class="text-muted mr-3" href="/admin/dashboard/index"><b>Admin Panel</b></a>
+                  <br>
+                {% else %}
+                  {% if pages is not empty %}
+                    <a>Links:</a>
+                    <br>
+                  {% endif %}
+                {% endif %}
+                
+                {% if pages is not empty %}
+                  {% for page in pages %}
+                    <a href="/page/{{ page.url }}" class="text-muted mr-3">{{ page.title }}</a>
+                  {% endfor %}
+                {% endif %}
+
+              </small>
+            </div>
+
+            {% if settings.banner_left_status == 1 %}
+              <div class="mt-4">
+                {{ settings.banner_left|raw }}
+              </div>
+            {% endif %}
+            
+          </div>
+        </div>
+
+        <div class="col-lg-9 order-lg-2">
+
+          {% if settings.banner_top_status == 1 %}
+            <div class="max-width-100 row mt-4 mb-4 pl-3 pr-3">
+              {{ settings.banner_top|raw }}
+            </div>
+          {% endif %}
+          
+          <div class="card">
+
+            <form method="post" action="/user/update" enctype="multipart/form-data" autocomplete="off">
+
+              <div class="card-header pt-4">
+        
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                  <li class="nav-item">
+                    <a class="btn btn-sm nav-link active" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="true">Profile</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="btn btn-sm nav-link" id="pills-account-tab" data-toggle="pill" href="#pills-account" role="tab" aria-controls="pills-account" aria-selected="true">Account</a>
+                  </li>
+                </ul>
+
+              </div>
+
+              <div class="card-body">
+
+                <div class="tab-content" id="pills-tabContent">
+                  <div class="tab-pane fade show active" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="form-group card p-4">
+                          <label class="form-label mb-0" for="name">Your Name <span class="form-required">*</span></label>
+                          <small class="text-muted">Enter your name, which will be visible to another users near username.</small>
+                          <input type="text" class="form-control mt-2" id="name" name="name" placeholder="Your name" value="{{ user.name }}" required="required">
+                        </div>
+
+                        <div class="form-group card p-4">
+                          <label class="form-label mb-0" for="birth_date">Birth Date</label>
+                          <small class="text-muted">Enter your name, which will be visible to another users near username.</small>
+                          <input type="date" class="form-control mt-2" id="birth_date" name="birth_date" placeholder="Choose birth date" value="{{ user.birth_date }}" min='1899-01-01' max='{{ "now"|date("Y-m-d") }}'>
+                        </div>
+
+                        <div class="form-group card p-4">
+                          <label class="form-label mb-0" for="location">Location</label>
+                          <small class="text-muted">Enter your current location.</small>
+                          <input type="text" class="form-control mt-2" id="location" name="location" placeholder="Country, City" value="{{ user.location }}">
+                        </div>
+
+                        <div class="form-group card p-4">
+                          <label class="form-label mb-0" for="gender">Gender</label>
+                          <small class="text-muted">Choose your gender.</small>
+                          <select id="gender" name="gender" class="form-control mt-2">
+                            <option value="0" {% if user.gender != 1 and user.gender != 2 %}selected="selected"{% endif %}>Not Selected</option>
+                            <option value="1" {% if user.gender == 1 %}selected="selected"{% endif %}>Male</option>
+                            <option value="2" {% if user.gender == 2 %}selected="selected"{% endif %}>Female</option>
+                          </select>
+                        </div>
+
+                        <div class="form-group card p-4">
+                          <label class="form-label mb-0" for="about">About you</label>
+                          <small class="text-muted">Tell us something about you. That information will be available in searching users.</small>
+                          <textarea class="form-control mt-2" id="about" name="about" placeholder="Tell us something about you">{{ user.about }}</textarea>
+                        </div>
+
+                        <div class="form-group card p-4">
+                          <label class="form-label" for="photo">Your photo</label>
+                          <small class="text-muted d-block mb-2">
+                            <img id='img-upload' {% if user.photo %}src="/media/images/users/{{ user.photo }}"{% endif %} style="max-width: 100px; max-height: 100px; display: block; float: left; margin-right: 10px; margin-bottom: 10px">
+                            Allowed JPG / PNG. Max size: 10 MB.
+                          </small>
+                          <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="photo" name="photo" accept="image/*">
+                            <div class="custom-file-drag">
+                              <h1><i class="fe fe-image"></i><sup style="top: -0.8em;"><i class="fe fe-move" style="font-size: 14px"></i></sup></h1>
+                              Choose or drag image here.
+                              <div class="images-uploaded"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="tab-pane fade" id="pills-account" role="tabpanel" aria-labelledby="pills-account-tab">
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <div class="form-group card p-4">
+                          <label class="form-label mb-0" for="email">Email Address <span class="form-required">*</span></label>
+                          <small class="text-muted">Enter your email address.</small>
+                          <input type="text" class="form-control mt-2" id="email" name="email" placeholder="example@example.com" value="{{ user.email }}" required="required" autocomplete="off">
+                        </div>
+
+                        {% if settings.email_notifications > 0 %}
+                          <div class="form-group card p-4">
+                            <label class="form-label mb-0" for="email_notifications">Email Notifications</label>
+                            <small class="text-muted">If you enable that option - you will receive notifications to your email address.</small>
+                            <label class="d-block custom-switch mt-2">
+                              <input type="checkbox" name="email_notifications" id="email_notifications" class="custom-switch-input" {% if(user.email_notifications == 1) %}checked="checked"{% endif %}>
+                              <span class="custom-switch-indicator"></span>
+                              <span class="custom-switch-description">Enable Notifications</span>
+                            </label>
+                          </div>
+                        {% endif %}
+
+                        <a href="#" onclick="create_new_password(); return false;" class="btn btn-light btn-new-password">Change password</a>
+
+                        <div id="change_password" class="d-none">
+                          <div class="form-group card p-4">
+                            <label class="form-label mb-0" for="current_password">Current Password</label>
+                            <small class="text-muted">Enter your current password.</small>
+                            <input type="text" class="form-control mt-2" id="current_password" name="current_password" placeholder="Your current password">
+
+                            <br>
+
+                            <label class="form-label mb-0" for="new_password">New Password</label>
+                            <small class="text-muted">Enter new password.</small>
+                            <input type="text" class="form-control mt-2" id="new_password" name="new_password" placeholder="Your new password">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="card-footer">
+                <div class="d-flex">
+                  <button type="submit" class="btn btn-primary mr-auto">Save Settings</button>
+                </div>
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

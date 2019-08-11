@@ -1,0 +1,155 @@
+{#
+  Admin Panel. Edit Page template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Edit page. Admin panel{% endblock %}
+
+{% block footer %}
+
+  <script type="text/javascript" src="/media/vendor/Quill/image-resize.min.js"></script>
+  <script type="text/javascript" src="/media/vendor/Quill/video-resize.min.js"></script>
+  <script type="text/javascript" src="/media/vendor/Quill/image-upload.js"></script>
+  <script type="text/javascript" src="/media/vendor/Quill/quill.mention.min.js"></script>
+
+  <script>
+
+    $(document).ready( function() {
+
+      var quill = new Quill('#editor', {
+        modules: {
+          toolbar: [
+            [{ header: [3, 4, 5, 6, false], }],
+            ['bold', 'italic', 'underline', 'code-block', 'link', 'image', 'video'],
+          ],
+          imageResize: {
+            displaySize: true
+          },
+          videoResize: {
+          },
+          imageUpload: {
+            url: "/admin/pages/upload-image",
+            method: "POST", 
+            headers: {},
+            callbackOK: (serverResponse, next) => {
+              next(serverResponse);   
+            },
+            callbackKO: (serverError) => {
+              console.log(serverError);
+            }
+          },
+        },
+        placeholder: 'Enter page content',
+        theme: 'snow'
+      });
+
+      var form = document.querySelector('#editPageForm');
+
+      form.onsubmit = function() {
+
+        var content = document.querySelector('input[name=content]');
+        content.value = quill.root.innerHTML;
+      };
+
+    });
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          Edit page
+        </h1>
+        <div class="page-options d-flex">
+          <a href="/admin/pages/index" class="btn btn-outline-primary ml-4"><i class="fe fe-arrow-left mr-1"></i>Back to all pages</a>
+        </div>
+      </div>
+
+      <div class="row col-sm-12">
+        <div class="card">
+          <form method="post" action="/admin/pages/save" enctype="multipart/form-data" id="editPageForm">
+
+            <input type="hidden" name="page_id" value="{{ page.id }}">
+
+            <div class="card-header">
+              <h4 class="card-title">Page ID: <b class="text-muted">#{{ page.id }}</b></h4>
+            </div>
+            <div class="card-body">
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="title">Page title <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Try to choose short title to not break layout. Let it be up to 10-12 characters.
+                    </small>
+                    <input type="text" class="form-control mt-2" id="title" name="title" placeholder="Page title" required="required" value="{{ page.title }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="active">Page Status <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Choose if page will be active or hidden. You can change this value later by editing page.<br>
+                      If page is active - it will be available for users after adding it.
+                    </small>
+                    <select name="active" id="active" class="form-control mt-2">
+                      <option value="0" {% if page.active == 0 %}selected="selected"{% endif %}>Inactive (Hidden)</option>
+                      <option value="1" {% if page.active == 1 %}selected="selected"{% endif %}>Active (Available)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="url">Page URL <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Page's URL. It will be available on /page/{page_url}. Allowed only a-z, _, 0-9.
+                    </small>
+                    <input type="text" class="form-control mt-2" id="url" name="url" placeholder="Page url" required="required" pattern="[_a-zA-Z0-9!@#$%^*|]{6,25}" value="{{ page.url }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label" for="content">Page content <span class="form-required">*</span></label>
+                    <small class="text-muted d-block pb-2">
+                      Enter page's content
+                    </small>
+                    <input name="content" type="hidden">
+                    <div id="editor">{{ page.content|raw }}</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+           <div class="card-footer">
+              <div class="d-flex">
+                <div class="mr-auto">
+                  <button type="submit" class="btn btn-primary">Save page</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+{% endblock %}

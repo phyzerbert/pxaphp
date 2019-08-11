@@ -1,0 +1,84 @@
+{#
+  Answer template
+  Tab Size: 2 
+#}
+<div class="post card pt-5 pb-0 pl-4 pr-4 mb-3" id="answer_{{answer.id}}"{% if answer.votes < -10 %} style="opacity: 0.6;"{% endif %}>
+
+	{% if answer.user_id == current_user.id %}
+		<div class="card-status card-status-left bg-blue-lighter"></div>
+	{% endif %}
+
+	<div class="media">
+  	
+  	<a href="/user/{{ answer.author.username }}" target="_blank"><div class="media-object avatar avatar-md mr-4" {% if answer.author.photo %}style="color: transparent; background-image: url(/media/images/users/{{ answer.author.photo }})"{% endif %}>{{ answer.author.username|slice(0, 2)|upper }}</div></a>
+  	
+  	<div class="media-body">
+  		<div class="media-heading">
+
+				{% if answer.user_id == current_user.id %}
+  				<a class="float-right tag tag-own-question">Your Answer <span class="tag-addon tag-azure opacity-6"> </span></a>
+				{% endif %}
+
+    		<h5 class="mb-0"><a href="/user/{{ answer.author.username }}" target="_blank">{{ answer.author.username|capitalize }} <span class="text-muted" style="font-size: 85%">{{ answer.author.points }} p.</span></a></h5>
+    		<small class="text-muted">Answered <a class="text-muted text-hover-underline" href="/question/{{ question.url }}?answer_id={{ answer.id }}" target="_blank">{{ answer.added_at|timeago }}</a>{% if answer.modified_at > 0%} (Edited {{ answer.modified_at|timeago }}){% endif %}</small>
+
+  		</div>
+  		<div class="mt-2 answer_content">
+  			{% autoescape 'html' %}{{ answer.answer | raw }}{% endautoescape %}
+  		</div>
+  	</div>
+
+	</div>
+
+	<div class="card-footer pl-0 pr-0">
+
+	{% if current_user %}
+
+		<!-- Vote Button -->
+		<span class="btn-vote d-inline-block">
+			<div class="input-group">
+		  	<span class="input-group-prepend">
+		    	<span class="input-group-text text-primary click-vote {% if answer.is_voted == 1 %}active{% endif %}" onclick="vote_answer({{ answer.id }});"><i class="fe fe-thumbs-up"></i></span>
+		  	</span>
+		  	<input type="text" class="form-control text-center plaintext votes-number" disabled="" value="{{ answer.votes }} votes">
+		  	<span class="input-group-append">
+		    	<span class="input-group-text text-primary click-unvote {% if answer.is_voted == -1 %}active{% endif %}" onclick="unvote_answer({{ answer.id }});"><i class="fe fe-thumbs-down"></i></span>
+		  	</span>
+			</div>
+		</span>
+		<!-- /Vote Button -->
+
+		{% if current_user.id == answer.user_id %}
+
+			<div class="dropdown">
+			  <button type="button" class="btn btn-outline-secondary dropdown-toggle btn-sm" data-toggle="dropdown">
+			   <i class="fe fe-edit-2"></i> <i class="fe fe-more-vertical"></i> <i class="fe fe-trash-2 i-danger"></i>
+			  </button>
+			  <div class="dropdown-menu">
+			    <a class="dropdown-item" href="#" onclick="edit_answer({{ answer.id }}); return false;"><i class="fe fe-edit-2"></i> Edit Answer</a>
+			    <a class="dropdown-item" href="#" onclick="delete_answer({{ answer.id }}); return false;"><i class="fe fe-trash-2 i-danger"></i> Delete Answer</a>
+			  </div>
+			</div>
+
+		{% else %}
+
+			<div class="dropdown">
+			  <button type="button" class="btn btn-outline-secondary dropdown-toggle btn-sm" data-toggle="dropdown">
+			    <i class="fe fe-alert-triangle i-danger"></i>
+			  </button>
+			  <div class="dropdown-menu">
+			    <a class="dropdown-item" href="#" onclick="report_answer({{ answer.id }}); return false;"><i class="fe fe-alert-triangle i-danger"></i> Report Answer</a>
+			  </div>
+			</div>
+		{% endif %}
+		
+	{% else %}
+
+		<a href="/signin" class="btn btn-outline-primary btn-sm mr-1">Sign In</a> <small>or</small>
+		<a href="/signup" class="btn btn-outline-primary btn-sm mr-1 ml-1">Sign Up</a> <small>to vote answers.</small>
+
+	{% endif %}
+	
+	</div>
+
+</div>

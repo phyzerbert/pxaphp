@@ -1,0 +1,57 @@
+{#
+  All Notifications template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}{{ this_page.title }}{% endblock %}
+{% block page_description %}{{ this_page.title }}{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="row">
+
+      	{% include('leftbar.twig') %}
+
+        <div class="col-lg-9 order-lg-2">
+
+          <div class="row col-12 mb-4 pr-0 pl-0 no-gutters justify-content-between">
+            <div class="float-right">
+              <a class="btn btn-secondary" onclick="notifications_readed(); return false;">Mark all as read</a>
+            </div>
+          </div>
+
+          {% if settings.banner_top_status == 1 %}
+            <div class="max-width-100 row mt-4 mb-4 pl-3 pr-3">
+              {{ settings.banner_top|raw }}
+            </div>
+          {% endif %}
+
+          <div class="card">
+          
+            {% if notifications is not empty %}
+
+              <ul class="m-0 p-0 notifications-with-borders">
+                {% include('Notifications/load.twig') %}
+              </ul>
+
+            {% else %}
+
+              <div class="card pt-4 pl-4">
+                <p>No notifications currently.</p>
+              </div>
+
+            {% endif %}
+
+          </div>
+
+          {% include('pagination.twig') %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

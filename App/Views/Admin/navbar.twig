@@ -1,0 +1,66 @@
+{#
+  Admin Panel. Navigation bar template
+  Tab Size: 2 
+#}
+<div class="header collapse d-lg-flex p-0" id="headerMenuCollapse">
+  <div class="container">
+    <div class="row align-items-center">
+
+      <div class="col-lg order-lg-first pt-2">
+        <ul class="nav nav-tabs border-0 flex-column flex-lg-row">
+          <li class="nav-item">
+            <a href="/admin/dashboard/index" class="nav-link {% if admin_tab == 'dashboard' %}active{% endif %}"><i class="fe fe-home"></i> Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a href="/admin/dashboard/settings" class="nav-link {% if admin_tab == 'settings' %}active{% endif %}"><i class="fe fe-settings"></i> Settings</a>
+          </li>
+          <li class="nav-item">
+            <a href="javascript:void(0)" class="nav-link {% if admin_tab == 'reports' %}active{% endif %} {% if new_reports > 0%}text-danger{% endif %}" data-toggle="dropdown"><i class="fe fe-activity"></i> Reports</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="/admin/reports/index" class="dropdown-item">View Unreviewed {% if new_reports > 0%}({{ new_reports }}){% endif %}</a>
+              <a href="/admin/reports/resolved" class="dropdown-item">View Reviewed</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a href="javascript:void(0)" class="nav-link {% if admin_tab == 'users' %}active{% endif %}" data-toggle="dropdown"><i class="fe fe-users"></i> Users</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="/admin/users/add" class="dropdown-item">Add new user</a>
+              <a href="/admin/users/index" class="dropdown-item">Manage users</a>
+              <a href="/admin/users/banned" class="dropdown-item">Banned users</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="javascript:void(0)" class="nav-link {% if admin_tab == 'questions' %}active{% endif %}" data-toggle="dropdown"><i class="fe fe-help-circle"></i> Questions</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="/admin/questions/index" class="dropdown-item">Manage questions</a>
+              <a href="/admin/questions/hidden" class="dropdown-item">Hidden questions</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="javascript:void(0)" class="nav-link {% if admin_tab == 'answers' %}active{% endif %}" data-toggle="dropdown"><i class="fe fe-feather"></i> Answers</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="/admin/answers/index" class="dropdown-item">Manage answers</a>
+              <a href="/admin/answers/hidden" class="dropdown-item">Hidden answers</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="javascript:void(0)" class="nav-link {% if admin_tab == 'topics' %}active{% endif %}" data-toggle="dropdown"><i class="fe fe-grid"></i> Topics</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="/admin/topics/add" class="dropdown-item">Add new topic</a>
+              <a href="/admin/topics/index" class="dropdown-item">Manage topics</a>
+              <a href="/admin/topics/hidden" class="dropdown-item">Hidden topics</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="javascript:void(0)" class="nav-link {% if admin_tab == 'pages' %}active{% endif %}" data-toggle="dropdown"><i class="fe fe-layout"></i> Pages</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="/admin/pages/add" class="dropdown-item">Add new page</a>
+              <a href="/admin/pages/index" class="dropdown-item">Active pages</a>
+              <a href="/admin/pages/hidden" class="dropdown-item">Hidden pages</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

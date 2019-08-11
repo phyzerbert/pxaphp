@@ -1,0 +1,128 @@
+{#
+  Left bar template. Used on more pages as menu part.
+  Tab Size: 2 
+#}
+<div class="col-lg-3 order-lg-1 mb-4">
+	<div class="sticky-top sticky-offset">
+
+  	<div class="page-header">
+			<b>{{ this_page.title }}</b>
+   	</div>
+
+    <div class="d-lg-none p-relative">
+      {% if this_page.menu in ['questions_feed', 'questions_unanswered', 'questions_followed', 'questions_own', 'questions_all', 'all_topics', 'all_users'] %}
+        <a href="#" class="list-group-item list-group-item-action active" data-toggle="collapse" data-target="#leftbarCollapse">
+          <button href="#" class="btn btn-outline-primary float-right">Change</button>
+          {% if current_user %}
+            {% if this_page.menu == 'questions_feed' %}
+              <span class="icon mr-3"><i class="fe fe-zap"></i></span>Questions Feed<br>
+              <small class="menu-description">From topics which you follow only</small>
+            {% elseif this_page.menu == 'questions_unanswered' %}
+              <span class="icon mr-3"><i class="fe fe-edit"></i></span>Answer Needed<br>
+              <small class="menu-description">For questions from your followed topics</small>
+            {% elseif this_page.menu == 'questions_followed' %}
+              <span class="icon mr-3"><i class="fe fe-star"></i></span>Followed Questions<br>
+              <small class="menu-description">Qnly questions which you followed</small>
+            {% elseif this_page.menu == 'questions_own' %}
+              <span class="icon mr-3"><i class="fe fe-feather"></i></span>Your Own Questions<br>
+              <small class="menu-description">Only questions asked by you</small>
+            {% endif %}
+          {% endif %}
+          {% if this_page.menu == 'questions_all' %}
+            <span class="icon mr-3"><i class="fe fe-eye"></i></span>All Questions<br>
+            <small class="menu-description">View all questions from all topics</small>
+          {% elseif this_page.menu == 'all_topics' %}
+            <span class="icon mr-3"><i class="fe fe-grid"></i></span>All Topics<br>
+            <small class="menu-description">View all topics and questions per each topic</small>
+          {% elseif this_page.menu == 'all_users' %}
+            <span class="icon mr-3"><i class="fe fe-users"></i></span>All Users<br>
+            <small class="menu-description">View all users and find experts</small>
+          {% endif %}
+        </a>
+      {% else %}
+        <a href="#" onclick="window.history.back();" class="list-group-item list-group-item-action active">
+          Go back
+        </a>
+      {% endif %}
+    </div>
+
+  	<div class="list-group list-group-transparent mb-0 collapse d-lg-block" id="leftbarCollapse">
+  		{% if current_user %}
+        <a href="/questions/feed" class="list-group-item list-group-item-action {% if this_page.menu == 'questions_feed' %}active{% endif %}">
+        	<span class="icon mr-3"><i class="fe fe-zap"></i></span>Questions Feed<br>
+        	<small class="menu-description">From topics which you follow only</small>
+        </a>
+
+        <a href="/questions/without-answer" class="list-group-item list-group-item-action {% if this_page.menu == 'questions_unanswered' %}active{% endif %}">
+        	<span class="icon mr-3"><i class="fe fe-edit"></i></span>Answer Needed<br>
+        	<small class="menu-description">For questions from your followed topics</small>
+        </a>
+
+        <a href="/questions/followed" class="list-group-item list-group-item-action {% if this_page.menu == 'questions_followed' %}active{% endif %}">
+        	<span class="icon mr-3"><i class="fe fe-star"></i></span>Followed Questions<br>
+        	<small class="menu-description">Qnly questions which you followed</small>
+        </a>
+
+        <a href="/questions/own" class="list-group-item list-group-item-action {% if this_page.menu == 'questions_own' %}active{% endif %}">
+        	<span class="icon mr-3"><i class="fe fe-feather"></i></span>Your Own Questions<br>
+        	<small class="menu-description">Only questions asked by you</small>
+        </a>
+      {% endif %}
+
+      <a href="/questions/all" class="list-group-item list-group-item-action {% if this_page.menu == 'questions_all' %}active{% endif %}">
+      	<span class="icon mr-3"><i class="fe fe-eye"></i></span>All Questions<br>
+      	<small class="menu-description">View all questions from all topics</small>
+      </a>
+
+      <a href="/topics/all" class="list-group-item list-group-item-action {% if this_page.menu == 'all_topics' %}active{% endif %}">
+      	<span class="icon mr-3"><i class="fe fe-grid"></i></span>All Topics<br>
+      	<small class="menu-description">View all topics and questions per each topic</small>
+      </a>
+
+      <a href="/users/all" class="list-group-item list-group-item-action {% if this_page.menu == 'all_users' %}active{% endif %}">
+        <span class="icon mr-3"><i class="fe fe-users"></i></span>All Users<br>
+        <small class="menu-description">View all users and find experts</small>
+      </a>
+  	</div>
+
+  	{% if not current_user %}
+		
+			<div class="alert alert-icon alert-primary mt-4" role="alert">
+			  <i class="fe fe-check-circle mr-2" aria-hidden="true"></i> <b>Sign Up to get more options!</b>
+			  <div class="mt-2"></div>
+			  <small>After creating new account - you will have possibility to view questions only from topics in which you are interested, follow questions, rate answers.<br> Just try it!<br> <a href="/signup" class="mt-2 btn btn-sm btn-outline-primary">Sign Up Now</a></small>
+			</div>
+
+  	{% endif %}
+
+  	<div class="d-none d-lg-block mt-4">
+    	<small>
+    		{% if current_user.is_admin == 1 %}
+    			<a class="text-muted mr-3" href="/admin/dashboard/index"><b>Admin Panel</b></a>
+    			<br>
+        {% else %}
+          {% if pages is not empty %}
+            <a>Links:</a>
+            <br>
+          {% endif %}
+      	{% endif %}
+      	
+      	{% if pages is not empty %}
+          <div class="custom-pages mt-2">
+            {% for page in pages %}
+              <a href="/page/{{ page.url }}" class="mr-3 {% if this_page.page_id == page.id %}active-link{% else %}text-muted{% endif %}">{{ page.title }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+    	</small>
+  	</div>
+
+    {% if settings.banner_left_status == 1 %}
+      <div class="mt-4">
+        {{ settings.banner_left|raw }}
+      </div>
+    {% endif %}
+    
+  </div>
+</div>

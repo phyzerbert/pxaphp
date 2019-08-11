@@ -1,0 +1,220 @@
+{#
+  Admin Panel. Edit User template
+  Tab Size: 2 
+#}
+{% extends "base.twig" %}
+
+{% block page_title %}Edit user. Admin panel{% endblock %}
+
+{% block footer %}
+
+  <script>
+
+    function deleteUser() {
+      
+      $('#deleteUserModal').modal('show');
+    }
+
+  </script>
+
+{% endblock %}
+
+{% block body %}
+
+	<div class="my-3 my-md-5">
+    <div class="container">
+      <div class="page-header">
+        <h1 class="page-title">
+          Edit user
+        </h1>
+        <div class="page-options d-flex">
+          <a href="/admin/users/index" class="btn btn-outline-primary ml-4"><i class="fe fe-arrow-left mr-1"></i>Back to all users</a>
+        </div>
+      </div>
+
+      <div class="row col-sm-12">
+        <div class="card">
+          <form method="post" action="/admin/users/save" id="saveUserForm">
+
+            <input type="hidden" name="user_id" value="{{ user.id }}">
+
+            <div class="card-header">
+              <h4 class="card-title">User</h4>
+            </div>
+            <div class="card-body">
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="username">Username <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Enter user's username
+                    </small>
+                    <input type="text" class="form-control mt-2" id="username" name="username" placeholder="User's username" required="required" value="{{ user.username }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="email">Email address <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Enter user's email
+                    </small>
+                    <input type="email" class="form-control mt-2" id="email" name="email" placeholder="User's email" required="required" value="{{ user.email }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="name">Name</label>
+                    <small class="text-muted">
+                      Enter user's full name
+                    </small>
+                    <input type="text" class="form-control mt-2" id="name" name="name" placeholder="User's name" value="{{ user.name }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="is_active">Is activated <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Is account email confirmed?
+                    </small>
+                    <select class="form-control mt-2" id="is_active" name="is_active" required="required">
+                      <option value="0" {% if user.is_active == 0 %}selected="selected"{% endif %}>Non-Activated</option>
+                      <option value="1" {% if user.is_active == 1 %}selected="selected"{% endif %}>Activated</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="birth_date">Birth date</label>
+                    <small class="text-muted">
+                      Enter user's birth date
+                    </small>
+                    <input type="date" class="form-control mt-2" id="birth_date" name="birth_date" placeholder="User's birth_date" min='1899-01-01' max='{{ "now"|date("Y-m-d") }}' value="{{ user.birth_date }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="location">Location</label>
+                    <small class="text-muted">
+                      Enter user's location
+                    </small>
+                    <input type="text" class="form-control mt-2" id="location" name="location" placeholder="User's location" value="{{ user.location }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="about">About user</label>
+                    <small class="text-muted">
+                      Enter user's description (Available for all)
+                    </small>
+                    <input type="text" class="form-control mt-2" id="about" name="about" placeholder="User's about description" value="{{ user.about }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="points">Points <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Start number of points
+                    </small>
+                    <input type="number" class="form-control mt-2" id="points" name="points" placeholder="10" required="required" value="{{ user.points }}">
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="email_notifications">Email notifications <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Option if email notifications are enabled or disabled
+                    </small>
+                    <select class="form-control mt-2" id="email_notifications" name="email_notifications" required="required">
+                      <option value="0" {% if user.email_notifications == 0 %}selected="selected"{% endif %}>Disabled</option>
+                      <option value="1" {% if user.email_notifications == 0 %}selected="selected"{% endif %}>Enabled</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="form-group card p-4">
+                    <label class="form-label mb-0" for="is_admin">Is admin account? <span class="form-required">*</span></label>
+                    <small class="text-muted">
+                      Option if this account has access to admin panel
+                    </small>
+                    <select class="form-control mt-2" id="is_admin" name="is_admin" required="required">
+                      <option value="0" {% if user.is_admin == 0 %}selected="selected"{% endif %}>Is not admin</option>
+                      <option value="1" {% if user.is_admin == 1 %}selected="selected"{% endif %}>Is admin</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+           <div class="card-footer">
+              <div class="d-flex">
+                <div class="mr-auto">
+                  <button type="submit" class="btn btn-primary">Update user</button>
+                </div>
+                <div class="ml-auto">
+                  <a href="#" onclick="deleteUser({{ user.id }}); return false;" class="btn btn-danger">Delete this user</a>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md">
+      <div class="modal-content">
+        <div class="modal-body text-center">
+          <h1><i class="fe fe-trash-2 pt-4 text-danger"></i></h1>
+          <h5 class="modal-title">Do you confirm that want to delete this user?</h5>
+          <small>After deleting:
+            <ul class="text-left">
+              <li>You will can not restore it</li>
+              <li>Will be deleted all questions, answers, votes and notifications associated with this user</li>
+              <li>User will can not access more his acccount</li>
+            </ul>
+          </small>
+        </div>
+        <div class="modal-footer">
+          <form method="post" action="/admin/users/delete">
+            <input type="hidden" id="deleteUserId" name="id" value="{{ user.id }}">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-outline-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

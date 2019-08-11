@@ -1,0 +1,41 @@
+{#
+  Report Answer Modal template
+  Tab Size: 2 
+#}
+<div class="modal fade" id="reportAnswerModal" role="dialog" aria-labelledby="reportAnswerModalLabel" aria-hidden="true">
+
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="reportAnswerModalLabel"><i class="fe fe-alert-triangle text-primary"></i> Report answer</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form method="post" action="/answers/report" id="reportAnswerForm">
+
+        <input type="hidden" id="report_answer_id" name="answer_id" value="0">
+        <input type="hidden" id="report_url_back" name="redirect_url" value="">
+
+        <div class="modal-body">
+
+					<div class="card-body p-4">
+            <p>Why you report this answer?</p>
+					  <textarea class="form-control" id="report_answer_message" name="report_message" placeholder="Your message" required="required" autofocus="autofocus"></textarea>
+					</div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Close</button>
+          <button type="submit" class="btn btn-primary step-sbmt">Report</button>
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+  
+</div>

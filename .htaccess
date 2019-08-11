@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteBase /
+RewriteCond %{REQUEST_URI} media/
+RewriteRule ^media/(.*)$ /public/media/$1 [PT,L,QSA]
+RewriteCond %{REQUEST_URI} !public/
+RewriteRule ^(.*)$ /public/index.php?$1 [PT,L,QSA]
